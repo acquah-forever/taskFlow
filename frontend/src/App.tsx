@@ -1,6 +1,10 @@
 import Home  from './pages/Home'
-import { Routes,Route } from 'react-router-dom'
+import Login from './pages/Login'
+import SignUp from './pages/SignUp'
 import Board  from './pages/Board'
+
+import { Routes,Route } from 'react-router-dom'
+
 
 const App = () => {
   return (
@@ -8,6 +12,9 @@ const App = () => {
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/board' element={<Board />} />
+        <Route path='/login' element={<Login />} />
+        <Route path='/signup' element={<SignUp />} />
+
       </Routes>
     </div>
   )
