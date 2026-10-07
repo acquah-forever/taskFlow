@@ -1,8 +1,9 @@
+import Login from '../pages/Login'
 
 const Home = () => {
   return (
-    <div>
-      
+    <div className='p-6'>
+        <Login />
     </div>
   )
 }
