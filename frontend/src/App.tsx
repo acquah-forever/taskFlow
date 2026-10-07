@@ -8,13 +8,15 @@ import { Routes, Route } from 'react-router-dom'
 
 const App = () => {
   return (
-    <div className='bg-linear-to-br from-pink-900  to-black min-h-screen mx-auto'>
+    <div className='flex flex-col bg-linear-to-br from-pink-900  to-black min-h-screen'>
+      <div className='container mx-auto'>
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/board' element={<Board />} />
         <Route path='/login' element={<Login />} />
         <Route path='/signup' element={<SignUp />} />
       </Routes>
+      </div>
     </div>
   )
 }
