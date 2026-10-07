@@ -17,8 +17,8 @@ const Login = () => {
     }
 
     return (
-        <div id='login' className="flex justify-center items-center min-h-screen">
-            <form onSubmit={handleSubmit(onSubmit)} className="fieldset max-w-md w-full border-base-300 rounded-box border p-6">
+        <form id='login' onSubmit={handleSubmit(onSubmit)} className="flex justify-center items-center min-h-screen">
+            <fieldset  className="fieldset max-w-md w-full border-base-300 rounded-box border p-6">
                 <legend className="fieldset-legend text-2xl sm:text-3xl text-transparent bg-clip-text bg-linear-to-br from-sky-500 to-amber-100">TaskFlow Login</legend>
                 <label className="label text-md sm:text-lg text-white">Username</label>
                 <input type="text" className="input h-12  outline-none w-full" {...register("name", { required: "Username is required" })} />
@@ -44,8 +44,8 @@ const Login = () => {
                 <p className="text-center text-white text-md sm:text-lg">Dont have an Account? <span className="underline text-transparent bg-clip-text bg-linear-to-br from-sky-500 to-amber-100 cursor-pointer" onClick={() => navigate('/signup')}>
                     Sign Up
                 </span></p>
-            </form>
-        </div>
+            </fieldset>
+        </form>
     )
 }
 
