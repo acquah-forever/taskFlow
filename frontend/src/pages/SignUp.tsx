@@ -48,7 +48,7 @@ const SignUp = () => {
                 }
 
                 <label className="label text-white text-md sm:text-lg">Password</label>
-                <input type="text" className="input h-12 mb-7 outline-none w-full" {...register("password", { required: "Password is required" })} />
+                <input type="password" className="input h-12 mb-7 outline-none w-full" {...register("password", { required: "Password is required" })} />
                 {errors.password &&
                     <div className='flex items-center space-x-1'>
                         <CircleAlert className='text-pink-300' size={20} />
