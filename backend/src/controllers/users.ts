@@ -17,13 +17,13 @@ export const getAuthenticatedUser: RequestHandler = async (req, res, next) => {
         const authenticatedUser = req.session.userId;
 
         if (!authenticatedUser) {
-            throw createHttpError(404, "User not authenticated");
+            throw createHttpError(401, "User not authenticated");
         }
 
         const getUser = await Users.findById(authenticatedUser).select("+email").exec();
 
         if (!getUser) {
-            throw createHttpError(401, "User not found");
+            throw createHttpError(404, "User not found");
         }
 
         res.status(200).json(userResponse(getUser));
@@ -55,15 +55,15 @@ export const signup: RequestHandler<unknown, unknown, SignUp, unknown> = async (
         const password = passwordRaw
 
 
-        if (!userNameTrimmed || !emailTrimmed) {
+        if (!userNameTrimmed || !emailTrimmed || !password) {
             throw createHttpError(400, "Parameters Missing")
         }
 
-        if (userNameTrimmed.length > 20) {
+        if (userNameTrimmed.length > 50) {
             throw createHttpError(400, "Username is too lengthy")
         }
 
-        if (emailTrimmed.length > 20) {
+        if (emailTrimmed.length > 50) {
             throw createHttpError(400, "Email is too lenghty")
         }
 
@@ -73,12 +73,12 @@ export const signup: RequestHandler<unknown, unknown, SignUp, unknown> = async (
 
         const existingUserName = await Users.exists({ userName: userNameTrimmed })
         if (existingUserName) {
-            throw createHttpError(404, "Username already exists")
+            throw createHttpError(409, "Username already exists")
         }
 
         const existingEmail = await Users.exists({ emai: emailTrimmed })
         if (existingEmail) {
-            throw createHttpError(404, "Email already exists")
+            throw createHttpError(409, "Email already exists")
         }
 
         const passwordHashed = await bcrypt.hash(passwordRaw, 12)
