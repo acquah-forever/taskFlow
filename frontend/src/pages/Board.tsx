@@ -1,25 +1,61 @@
 import { useState } from 'react'
-import Card from '../components/Card'
+import { useForm } from 'react-hook-form'
+import { X } from 'lucide-react'
+
 import NavBar from "../components/NavBar"
 
-const Board = () => {
-    const [card, setCard] = useState([])
+interface FormValues {
+    title: string,
+    description: string
+}
 
-    function handleClick() {
-        setCard(prevCards => [...prevCards, {}])
+const Board = () => {
+    const { register, handleSubmit, formState: { errors } } = useForm<FormValues>()
+    const [open, setOpen] = useState<number | null>(null)
+
+        
+
+    function handleOpen(index: number) {
+        setOpen(prev => prev === index ? null : index)
     }
+
+    function onSubmit() {
+
+    }
+
 
     return (
         <div className="flex flex-col">
             <NavBar />
             <div className="mt-7">
-                <button className="btn btn-xs sm:btn-sm md:btn-md" onClick={handleClick}>Create Board</button>
+                <button className="btn btn-md" onClick={() => handleOpen(1)}>Create Board</button>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6 mt-4 px-4 sm:px-6 lg:px-8">
-                {card.map((_, index) => (
-                    <Card key={index} />
-                ))}
-            </div>
+            {
+                open &&
+                <div className="mt-2 card bg-base-100 w-60 sm:w-80 h-75 shadow-sm">
+                    <div className="card-body">
+                        <form onSubmit={handleSubmit(onSubmit)} action="">
+                            <div className='flex justify-end'>
+                                <X className='cursor-pointer' size={23} onClick={() => handleOpen(2)}/>
+                            </div>
+                            <h2 className="card-title text-sm font-normal mb-1">Board Title</h2>
+                            <input type="text" placeholder="Type here" className="input mb-1 outline-0"
+                                {...register('title', { required: "Board title is required" })} />
+                            {errors.title && <p className='text-xs text-red-500 mb-2'>{errors.title.message}</p>}
+
+                            <h2 className="card-title text-sm font-normal mb-1">Board Description</h2>
+                            <input type="text" placeholder="Type here" className="input mb-1 outline-0"
+                                {...register('description', { required: "Description is required" })} />
+                            {errors.description && <p className='text-xs text-red-500'>{errors.description.message}</p>}
+
+                            <div className="card-actions mt-5">
+                                <button type='submit' className="btn btn-primary">Create</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            }
+
         </div>
 
     )

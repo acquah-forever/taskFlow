@@ -41,9 +41,9 @@ const Login = () => {
                 <button type='submit' className="btn bg-[#0967C2] text-white text-md sm:text-lg border-[#0059b3] mb-7 mt-5">
                     Sign In
                 </button>
-                <p className="text-center text-white text-md sm:text-lg">Dont have an Account? <span className="underline text-transparent bg-clip-text bg-linear-to-br from-sky-500 to-amber-100 cursor-pointer" onClick={() => navigate('/signup')}>
+                <p className="text-center text-white text-md sm:text-lg">Dont have an Account? <button type="button" className="underline text-transparent bg-clip-text bg-linear-to-br from-sky-500 to-amber-100 cursor-pointer" onClick={() => navigate('/signup')}>
                     Sign Up
-                </span></p>
+                </button></p>
             </fieldset>
         </form>
     )
