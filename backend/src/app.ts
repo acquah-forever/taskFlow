@@ -10,7 +10,7 @@ app.use(express.json())
 
 app.get("/", (req, res) => {
  res.json({
-   message: "Backend is running smoothly"
+   message: "Backend is running"
  });
 });
 
