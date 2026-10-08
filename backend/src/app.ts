@@ -20,10 +20,6 @@ app.get("/", (req, res) => {
  });
 });
 
-app.use((req, res, next) => {
-  next(createHttpError(404, "Endpoint not found"))
-})
-
 app.use(session({
   name: "sessionId",
   secret: env.SESSION_SECRET,
@@ -44,6 +40,10 @@ app.use(session({
 }));
 
 app.use("/api/users", usersRouter)
+
+app.use((req, res, next) => {
+  next(createHttpError(404, "Endpoint not found"))
+})
 
 app.use((error: unknown, req: Request, res: Response, next: NextFunction) => {
   console.error(error);

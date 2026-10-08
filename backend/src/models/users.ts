@@ -1,11 +1,14 @@
 import { InferSchemaType, model, Schema } from "mongoose";
 
-const newUsers = new Schema({
-    userName: {type: String, required: true, trim: true},
-    email: {type: String, required: true, unique:true, trim: true},
-    password: {type: String, required:true, uinque:true}
+const userSchema = new Schema({
+    userName: {type: String, required: true, unique: true},
+    email: {type: String, required: true, unique:true, select: true, lowercase: true},
+    password: {type: String, required:true, select: false}
+},
+{
+    timestamps: true
 })
 
-type Users = InferSchemaType<typeof newUsers>;
+type Users = InferSchemaType<typeof userSchema>;
 
-export default model <Users>("Users", newUsers)
+export default model <Users>("Users", userSchema)
