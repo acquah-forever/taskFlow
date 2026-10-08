@@ -1,9 +1,9 @@
 import express from 'express';
-import { getAuthenticatedUsers, signup, login, logout} from '../controllers/users';
+import { getAuthenticatedUser, signup, login } from '../controllers/users';
 
 const router = express.Router();
 
-router.use('/', getAuthenticatedUsers);
+router.use('/', getAuthenticatedUser);
 router.use('/signup', signup);
 router.use('/login', login);
-router.use('/logout', logout);
+
