@@ -13,6 +13,8 @@ const Board = () => {
     const { register, handleSubmit, formState: { errors } } = useForm<FormValues>()
     const [open, setOpen] = useState<number | null>(null)
 
+        
+
     function handleOpen(index: number) {
         setOpen(prev => prev === index ? null : index)
     }
