@@ -15,7 +15,7 @@ const SignUp = () => {
     const { register, handleSubmit, formState: { errors } } = useForm<FormValue>()
     const [useLogin, setUseLogin] = useState(null)
     const navigate = useNavigate()
-    const boardNavigate= useNavigate()
+
 
     function onSubmit(data: FormValue) {
         console.log(data)
@@ -23,7 +23,7 @@ const SignUp = () => {
     }
 
     function handleClick() {
-        setUseLogin(boardNavigate('/login'))
+        setUseLogin(navigate('/login'))
     }
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="flex justify-center items-center min-h-screen">
@@ -59,7 +59,7 @@ const SignUp = () => {
                 <button className="btn bg-[#0967C2] text-white text-md sm:text-lg border-[#0059b3] mb-7">
                     Create Account
                 </button>
-                <p className="text-center text-white text-md sm:text-lg">Already have an Account? <span className="underline text-transparent bg-clip-text bg-linear-to-br from-sky-500 to-amber-100 cursor-pointer" onClick={handleClick}>Log In</span></p>
+                <p className="text-center text-white text-md sm:text-lg">Already have an Account? <button type="button" className="underline text-transparent bg-clip-text bg-linear-to-br from-sky-500 to-amber-100 cursor-pointer" onClick={handleClick}>Log In</button></p>
             </fieldset>
 
             {useLogin && <Login />}
