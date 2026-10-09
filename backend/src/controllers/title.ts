@@ -60,11 +60,6 @@ export const createTitle: RequestHandler<unknown, unknown, TitleValue, unknown> 
             throw createHttpError(400, "Invalid Parameters")
         };
 
-        const existingTitle = await Title.exists({ user: authenticatedUser });
-        if (existingTitle) {
-            throw createHttpError(409, "Title alreadye exists")
-        };
-
         const newTitle = await Title.create({
             user: authenticatedUser,
             title: titleTrimmed,
@@ -103,7 +98,7 @@ export const updateTitle: RequestHandler<{ id: string }, unknown, UpdateTitle, u
         const titleId = req.params.id
 
         if (!mongoose.isValidObjectId(titleId)) {
-            throw createHttpError(400, "Invalid profile id")
+            throw createHttpError(400, "Invalid title id")
         }
 
         const updatedTitle = await Title.findOneAndUpdate({ _id: titleId, user: authenticatedUser }, {
@@ -139,7 +134,7 @@ export const deleteTitle: RequestHandler = async (req, res, next) => {
         const titleId = req.params.id
 
         if (!mongoose.isValidObjectId(titleId)) {
-            throw createHttpError(400, "Invalid profile id")
+            throw createHttpError(400, "Invalid title id")
         }
 
         const deletedTitle = await Title.findOneAndDelete({_id: titleId, user: authenticatedUser});

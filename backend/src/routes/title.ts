@@ -7,6 +7,6 @@ router.get('/', getAuthenticatedUser);
 router.get('/', getTitle);
 router.post('/', createTitle);
 router.patch('/:id', updateTitle);
-router.delete('/.id', deleteTitle);
+router.delete('/:id', deleteTitle);
 
 export default router;

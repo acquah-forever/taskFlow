@@ -41,7 +41,7 @@ app.use(session({
 }));
 
 app.use("/api/users", usersRouter);
-app.use("/api/titles", titleRouter);
+app.use("/api/title", titleRouter);
 
 app.use((req, res, next) => {
   next(createHttpError(404, "Endpoint not found"))
