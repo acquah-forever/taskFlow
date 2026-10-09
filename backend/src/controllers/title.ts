@@ -69,6 +69,7 @@ export const createTitle: RequestHandler<unknown, unknown, TitleValue, unknown> 
         res.status(201).json(newTitle);
     }
     catch (error) {
+        console.error("CREATE TITLE ERROR:", error);
         next(error)
     }
 
