@@ -3,35 +3,35 @@ import { RequestHandler } from "express";
 import createHttpError from "http-errors";
 import mongoose from "mongoose";
 
-export const getAuthenticatedUser:RequestHandler = async(req, res, next) => {
-    try{
-        const userId = req.session.userId;
-        if(!userId){
+export const getAuthenticatedUser: RequestHandler = async (req, res, next) => {
+    try {
+        const authenticatedUser = req.session.userId;
+        if (!authenticatedUser) {
             throw createHttpError(401, "User not authenticated")
         };
-        const authenticatedUser = await Title.findById(userId).exec();
-        if(!authenticatedUser){
+        const existingUser = await Title.findOne({ user: authenticatedUser }).exec();
+        if (!existingUser) {
             throw createHttpError(404, "User not found")
         };
         res.status(200).json(authenticatedUser)
 
     }
-    catch(error){
+    catch (error) {
         next(error)
     }
 };
 
 
-export const getTitle:RequestHandler = async(req, res, next) => {
-    try{
+export const getTitle: RequestHandler = async (req, res, next) => {
+    try {
         const title = await Title.find().exec();
-        if(!title){
+        if (!title) {
             throw createHttpError(404, "Board not found")
         };
         res.status(200).json(title)
 
     }
-    catch(error){
+    catch (error) {
         next(error)
     }
 };
@@ -41,23 +41,120 @@ interface TitleValue {
     description: string
 };
 
-export const createTitle:RequestHandler<unknown, unknown, TitleValue, unknown> = async(req, res, next) => {
-    try{
-        const {title, description} = req.body;
+export const createTitle: RequestHandler<unknown, unknown, TitleValue, unknown> = async (req, res, next) => {
+    try {
+        const authenticatedUser = req.session.userId;
+        if (!authenticatedUser) {
+            throw createHttpError(401, "User not authenticated")
+        };
 
-        if(typeof title !== "string" || typeof description !== "string") {
+        const { title, description } = req.body;
+
+        if (typeof title !== "string" || typeof description !== "string") {
             throw createHttpError(400, "Invalid Parameters")
         };
         const titleTrimmed = title.trim();
         const descriptionTrimmed = description.trim();
 
-        if(!titleTrimmed || !descriptionTrimmed){
+        if (!titleTrimmed || !descriptionTrimmed) {
             throw createHttpError(400, "Invalid Parameters")
-        }
+        };
 
+        const existingTitle = await Title.exists({ user: authenticatedUser });
+        if (existingTitle) {
+            throw createHttpError(409, "Title alreadye exists")
+        };
+
+        const newTitle = await Title.create({
+            user: authenticatedUser,
+            title: titleTrimmed,
+            description: descriptionTrimmed
+        });
+
+        res.status(201).json(newTitle);
     }
-    catch(error){
+    catch (error) {
         next(error)
     }
 
 };
+
+interface UpdateTitle extends Partial<TitleValue> { }
+
+export const updateTitle: RequestHandler<{ id: string }, unknown, UpdateTitle, unknown> = async (req, res, next) => {
+    try {
+        const authenticatedUser = req.session.userId;
+        if (!authenticatedUser) {
+            throw createHttpError(401, "User not authenticated")
+        };
+
+        const { title, description } = req.body;
+
+        if (typeof title !== "string" || typeof description !== "string") {
+            throw createHttpError(400, "Invalid Parameters")
+        };
+        const titleTrimmed = title.trim();
+        const descriptionTrimmed = description.trim();
+
+        if (!titleTrimmed || !descriptionTrimmed) {
+            throw createHttpError(400, "Invalid Parameters")
+        };
+
+        const titleId = req.params.id
+
+        if (!mongoose.isValidObjectId(titleId)) {
+            throw createHttpError(400, "Invalid profile id")
+        }
+
+        const updatedTitle = await Title.findOneAndUpdate({ _id: titleId, user: authenticatedUser }, {
+            title: titleTrimmed,
+            description: descriptionTrimmed
+        },
+            {
+                new: true,
+                runValidators: true
+            }).exec()
+
+        if (!updatedTitle) {
+            throw createHttpError(404, "Board not found")
+        }
+
+        res.status(200).json(updatedTitle)
+
+    }
+    catch (error) {
+        next(error)
+    }
+};
+
+
+
+export const deleteTitle: RequestHandler = async (req, res, next) => {
+    try {
+        const authenticatedUser = req.session.userId;
+        if (!authenticatedUser) {
+            throw createHttpError(401, "User not authenticated");
+        }
+
+        const titleId = req.params.id
+
+        if (!mongoose.isValidObjectId(titleId)) {
+            throw createHttpError(400, "Invalid profile id")
+        }
+
+        const deletedTitle = await Title.findOneAndDelete({_id: titleId, user: authenticatedUser});
+
+        if (!deletedTitle) {
+            throw createHttpError(404, "Title not found");
+        }
+
+        res.status(200).json({
+            message: "Title deleted successfully",
+        });
+    }
+
+    catch (error) {
+        next(error);
+    }
+};
+
