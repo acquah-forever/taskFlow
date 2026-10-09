@@ -25,7 +25,7 @@ const Board = () => {
 
 
     return (
-        <div className="flex flex-col">
+        <div id='/board' className="flex flex-col">
             <NavBar />
             <div className="mt-7">
                 <button className="btn btn-md" onClick={() => handleOpen(1)}>Create Board</button>

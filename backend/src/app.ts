@@ -1,23 +1,32 @@
 import "dotenv/config";
 import express from 'express'
 import session from "express-session";
-import {Request, Response, NextFunction} from "express"
+import { Request, Response, NextFunction } from "express"
 import usersRouter from './routes/users'
+import titleRouter from './routes/title'
 import createHttpError, { isHttpError } from 'http-errors'
 import env from "./util/validateEnv";
 import mongoose from "mongoose";
 import MongoStore from "connect-mongo";
+import cors from "cors";
 
-const app = express()
+const app = express();
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 
 app.set("trust proxy", 1);
 
 app.use(express.json())
 
 app.get("/", (req, res) => {
- res.json({
-   message: "Backend is running"
- });
+  res.json({
+    message: "Backend is running"
+  });
 });
 
 app.use(session({
@@ -39,7 +48,8 @@ app.use(session({
   }),
 }));
 
-app.use("/api/users", usersRouter)
+app.use("/api/users", usersRouter);
+app.use("/api/title", titleRouter);
 
 app.use((req, res, next) => {
   next(createHttpError(404, "Endpoint not found"))
@@ -58,6 +68,23 @@ app.use((error: unknown, req: Request, res: Response, next: NextFunction) => {
   if (error instanceof mongoose.Error.ValidationError) {
     return res.status(400).json({
       error: error.message,
+    });
+  }
+
+  if (error instanceof mongoose.Error.CastError) {
+    return res.status(400).json({
+      error: error.message,
+    });
+  }
+
+  if (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    error.code === 11000
+  ) {
+    return res.status(409).json({
+      error: "A record with a unique field already exists.",
     });
   }
 

@@ -13,6 +13,7 @@
   "description": "",
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/express-session": "^1.19.0",
     "@types/http-errors": "^2.0.5",
@@ -24,6 +25,7 @@
   "dependencies": {
     "bcrypt": "^6.0.0",
     "connect-mongo": "^6.0.0",
+    "cors": "^2.8.6",
     "dotenv": "^18.0.6",
     "envalid": "^8.2.0",
     "express": "^5.2.1",
