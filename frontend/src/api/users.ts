@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL
+const API_URL = import.meta.env.VITE_API_URL ?? "/api"
 
 export interface User {
     id: string,
@@ -13,7 +13,7 @@ export interface SignUpData {
 
 export interface LogInData {
     username: string,
-    email: string
+    password: string
 };
 
 export interface ApiError {

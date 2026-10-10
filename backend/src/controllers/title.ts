@@ -1,7 +1,11 @@
 import Title from "../models/title";
+import Users from "../models/users";
 import { RequestHandler } from "express";
 import createHttpError from "http-errors";
 import mongoose from "mongoose";
+import { titlesSchema } from "../validations/title";
+import { ZodError } from "zod";
+
 
 export const getAuthenticatedUser: RequestHandler = async (req, res, next) => {
     try {
@@ -9,7 +13,7 @@ export const getAuthenticatedUser: RequestHandler = async (req, res, next) => {
         if (!authenticatedUser) {
             throw createHttpError(401, "User not authenticated")
         };
-        const existingUser = await Title.findOne({ user: authenticatedUser }).exec();
+        const existingUser = await Users.findOne({ user: authenticatedUser }).exec();
         if (!existingUser) {
             throw createHttpError(404, "User not found")
         };
@@ -24,7 +28,12 @@ export const getAuthenticatedUser: RequestHandler = async (req, res, next) => {
 
 export const getTitle: RequestHandler = async (req, res, next) => {
     try {
-        const title = await Title.find().exec();
+        const authenticatedUser = req.session.userId;
+        if (!authenticatedUser) {
+            throw createHttpError(401, "User not authenticated")
+        };
+
+        const title = await Title.find({ user: authenticatedUser }).exec();
         if (!title) {
             throw createHttpError(404, "Board not found")
         };
@@ -48,28 +57,34 @@ export const createTitle: RequestHandler<unknown, unknown, TitleValue, unknown> 
             throw createHttpError(401, "User not authenticated")
         };
 
-        const { title, description } = req.body;
+        const validateData = titlesSchema.parse(req.body);
 
-        if (typeof title !== "string" || typeof description !== "string") {
-            throw createHttpError(400, "Invalid Parameters")
-        };
-        const titleTrimmed = title.trim();
-        const descriptionTrimmed = description.trim();
+        const { title, description } = validateData;
 
-        if (!titleTrimmed || !descriptionTrimmed) {
-            throw createHttpError(400, "Invalid Parameters")
-        };
+        // const { title, description } = req.body;
+
+        // if (typeof title !== "string" || typeof description !== "string") {
+        //     throw createHttpError(400, "Invalid Parameters")
+        // };
+        // const titleTrimmed = title.trim();
+        // const descriptionTrimmed = description.trim();
+
+        // if (!titleTrimmed || !descriptionTrimmed) {
+        //     throw createHttpError(400, "Invalid Parameters")
+        // };
 
         const newTitle = await Title.create({
             user: authenticatedUser,
-            title: titleTrimmed,
-            description: descriptionTrimmed
+            title,
+            description
         });
 
         res.status(201).json(newTitle);
     }
     catch (error) {
-        console.error("CREATE TITLE ERROR:", error);
+        if (error instanceof ZodError) {
+            throw createHttpError(400, "Invalid data")
+        }
         next(error)
     }
 
@@ -84,17 +99,21 @@ export const updateTitle: RequestHandler<{ id: string }, unknown, UpdateTitle, u
             throw createHttpError(401, "User not authenticated")
         };
 
-        const { title, description } = req.body;
+        const validateData = titlesSchema.parse(req.body);
 
-        if (typeof title !== "string" || typeof description !== "string") {
-            throw createHttpError(400, "Invalid Parameters")
-        };
-        const titleTrimmed = title.trim();
-        const descriptionTrimmed = description.trim();
+        const { title, description } = validateData;
 
-        if (!titleTrimmed || !descriptionTrimmed) {
-            throw createHttpError(400, "Invalid Parameters")
-        };
+        // const { title, description } = req.body;
+
+        // if (typeof title !== "string" || typeof description !== "string") {
+        //     throw createHttpError(400, "Invalid Parameters")
+        // };
+        // const titleTrimmed = title.trim();
+        // const descriptionTrimmed = description.trim();
+
+        // if (!titleTrimmed || !descriptionTrimmed) {
+        //     throw createHttpError(400, "Invalid Parameters")
+        // };
 
         const titleId = req.params.id
 
@@ -103,8 +122,8 @@ export const updateTitle: RequestHandler<{ id: string }, unknown, UpdateTitle, u
         }
 
         const updatedTitle = await Title.findOneAndUpdate({ _id: titleId, user: authenticatedUser }, {
-            title: titleTrimmed,
-            description: descriptionTrimmed
+            title,
+            description
         },
             {
                 new: true,
@@ -119,6 +138,9 @@ export const updateTitle: RequestHandler<{ id: string }, unknown, UpdateTitle, u
 
     }
     catch (error) {
+        if (error instanceof ZodError) {
+            throw createHttpError(400, "Invalid data")
+        }
         next(error)
     }
 };
@@ -138,7 +160,7 @@ export const deleteTitle: RequestHandler = async (req, res, next) => {
             throw createHttpError(400, "Invalid title id")
         }
 
-        const deletedTitle = await Title.findOneAndDelete({_id: titleId, user: authenticatedUser});
+        const deletedTitle = await Title.findOneAndDelete({ _id: titleId, user: authenticatedUser });
 
         if (!deletedTitle) {
             throw createHttpError(404, "Title not found");

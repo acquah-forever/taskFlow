@@ -14,7 +14,7 @@ interface FormValue {
 
 const SignUp = () => {
     const { register, handleSubmit, formState: { errors } } = useForm<FormValue>()
-    const { mutate: signUp, isPending } = useSignUp()
+    const { mutate: signUp, isPending, error } = useSignUp()
     const [useLogin, setUseLogin] = useState(null)
     const navigate = useNavigate()
 
@@ -35,6 +35,10 @@ const SignUp = () => {
         <form onSubmit={handleSubmit(onSubmit)} className="flex justify-center items-center min-h-screen">
             <fieldset className="fieldset max-w-md w-full border-base-300 rounded-box border p-6">
                 <legend className="fieldset-legend text-2xl sm:text-3xl text-transparent bg-clip-text bg-linear-to-br from-sky-500 to-amber-100">TaskFlow Signup</legend>
+                {error && <div className='flex items-center space-x-1'>
+                    <CircleAlert className='text-pink-300' size={20} />
+                    <p className='text-pink-300'>{error.message}</p>
+                </div>}
                 <label className="label text-md sm:text-lg text-white">Username</label>
                 <input type="text" className="input h-12 mb-2 outline-none w-full" {...register("username", { required: "Username is required" })} />
                 {errors.username &&

@@ -76,18 +76,7 @@ app.use((error: unknown, req: Request, res: Response, next: NextFunction) => {
       error: error.message,
     });
   }
-
-  if (
-    typeof error === "object" &&
-    error !== null &&
-    "code" in error &&
-    error.code === 11000
-  ) {
-    return res.status(409).json({
-      error: "A record with a unique field already exists.",
-    });
-  }
-
+  
   return res.status(500).json({
     error: "Internal server error",
   });
