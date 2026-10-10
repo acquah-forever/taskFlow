@@ -50,7 +50,7 @@ export const signup: RequestHandler<unknown, unknown, SignUp, unknown> = async (
             throw createHttpError(400, "Invalid Parameters")
         }
 
-        const usernameTrimmed = username    .trim()
+        const usernameTrimmed = username.trim()
         const emailTrimmed = email.trim()
         const password = passwordRaw
 
@@ -105,6 +105,7 @@ export const signup: RequestHandler<unknown, unknown, SignUp, unknown> = async (
         });
     }
     catch (error) {
+        console.error('Signup error:', error); 
         return next(error)
     }
 }
