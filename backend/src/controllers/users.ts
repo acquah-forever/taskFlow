@@ -4,10 +4,10 @@ import createHttpError from 'http-errors'
 import bcrypt from 'bcrypt'
 
 
-function userResponse(user: { username: string, password: string }) {
+function userResponse(user: { username: string, email: string }) {
     return {
         username: user.username,
-        password: user.password
+        email: user.email
     }
 
 };

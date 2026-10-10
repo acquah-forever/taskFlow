@@ -24,7 +24,12 @@ export const getAuthenticatedUser: RequestHandler = async (req, res, next) => {
 
 export const getTitle: RequestHandler = async (req, res, next) => {
     try {
-        const title = await Title.find().exec();
+        const authenticatedUser = req.session.userId;
+        if (!authenticatedUser) {
+            throw createHttpError(401, "User not authenticated")
+        };
+
+        const title = await Title.find({user: authenticatedUser}).exec();
         if (!title) {
             throw createHttpError(404, "Board not found")
         };
@@ -138,7 +143,7 @@ export const deleteTitle: RequestHandler = async (req, res, next) => {
             throw createHttpError(400, "Invalid title id")
         }
 
-        const deletedTitle = await Title.findOneAndDelete({_id: titleId, user: authenticatedUser});
+        const deletedTitle = await Title.findOneAndDelete({ _id: titleId, user: authenticatedUser });
 
         if (!deletedTitle) {
             throw createHttpError(404, "Title not found");
