@@ -61,18 +61,6 @@ export const createTitle: RequestHandler<unknown, unknown, TitleValue, unknown> 
 
         const { title, description } = validateData;
 
-        // const { title, description } = req.body;
-
-        // if (typeof title !== "string" || typeof description !== "string") {
-        //     throw createHttpError(400, "Invalid Parameters")
-        // };
-        // const titleTrimmed = title.trim();
-        // const descriptionTrimmed = description.trim();
-
-        // if (!titleTrimmed || !descriptionTrimmed) {
-        //     throw createHttpError(400, "Invalid Parameters")
-        // };
-
         const newTitle = await Title.create({
             user: authenticatedUser,
             title,
@@ -103,18 +91,6 @@ export const updateTitle: RequestHandler<{ id: string }, unknown, UpdateTitle, u
 
         const { title, description } = validateData;
 
-        // const { title, description } = req.body;
-
-        // if (typeof title !== "string" || typeof description !== "string") {
-        //     throw createHttpError(400, "Invalid Parameters")
-        // };
-        // const titleTrimmed = title.trim();
-        // const descriptionTrimmed = description.trim();
-
-        // if (!titleTrimmed || !descriptionTrimmed) {
-        //     throw createHttpError(400, "Invalid Parameters")
-        // };
-
         const titleId = req.params.id
 
         if (!mongoose.isValidObjectId(titleId)) {
@@ -140,6 +116,17 @@ export const updateTitle: RequestHandler<{ id: string }, unknown, UpdateTitle, u
     catch (error) {
         if (error instanceof ZodError) {
             throw createHttpError(400, "Invalid data")
+        }
+
+        if (
+            typeof error === "object" &&
+            error !== null &&
+            "code" in error &&
+            error.code === 11000
+        ) {
+            return res.status(409).json({
+                error: "A record with a unique field already exists.",
+            });
         }
         next(error)
     }

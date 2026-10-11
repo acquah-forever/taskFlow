@@ -67,7 +67,7 @@ export const signup: RequestHandler<unknown, unknown, SignUp, unknown> = async (
             throw createHttpError(400, "Email is too lenghty")
         }
 
-        if (!password || password.length > 128) {
+        if (password.length > 128) {
             throw createHttpError(400, "Password is too long")
         }
 
@@ -92,12 +92,14 @@ export const signup: RequestHandler<unknown, unknown, SignUp, unknown> = async (
 
         req.session.regenerate((error) => {
             if (error) {
+                console.error("Session regeneration failed:", error);
                 return next(error);
             }
             req.session.userId = newUser._id.toString();
 
             req.session.save((error) => {
                 if (error) {
+                    console.error("Session save failed:", error);
                     return next(error);
                 }
                 res.status(200).json(userResponse(newUser));
@@ -105,7 +107,16 @@ export const signup: RequestHandler<unknown, unknown, SignUp, unknown> = async (
         });
     }
     catch (error) {
-        console.error('Signup error:', error); 
+        if (
+            typeof error === "object" &&
+            error !== null &&
+            "code" in error &&
+            error.code === 11000
+        ) {
+            return res.status(409).json({
+                error: "A record with a unique field already exists.",
+            });
+        }
         return next(error)
     }
 }

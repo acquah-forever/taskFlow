@@ -22,15 +22,16 @@ const SignUp = () => {
     function onSubmit(data: FormValue) {
         signUp(data, {
             onSuccess: () => {
-                navigate("/board")
+                navigate('/board')
             }
         });
 
     };
 
-    function handleClick() {
+    function handleClick(){
         setUseLogin(navigate('/login'))
     }
+
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="flex justify-center items-center min-h-screen">
             <fieldset className="fieldset max-w-md w-full border-base-300 rounded-box border p-6">
@@ -66,10 +67,10 @@ const SignUp = () => {
                     </div>
                 }
 
-                <button className="btn bg-[#0967C2] text-white text-md sm:text-lg border-[#0059b3] mb-7">
-                    Create Account
+                <button type="submit" className="btn bg-[#0967C2] text-white text-md sm:text-lg border-[#0059b3] mb-7" disabled={isPending}>
+                    {isPending ? "Creating Account" : "Sign Up"}
                 </button>
-                <p className="text-center text-white text-md sm:text-lg">Already have an Account? <button type="button" disabled={isPending} className="underline text-transparent bg-clip-text bg-linear-to-br from-sky-500 to-amber-100 cursor-pointer" onClick={handleClick}>{isPending ? "Creatin Account" : "Sign Up"}</button></p>
+                <p className="text-center text-white text-md sm:text-lg">Already have an Account? <button type="button"  className="underline text-transparent bg-clip-text bg-linear-to-br from-sky-500 to-amber-100 cursor-pointer"onClick={handleClick} >Log In</button></p>
             </fieldset>
 
             {useLogin && <Login />}
