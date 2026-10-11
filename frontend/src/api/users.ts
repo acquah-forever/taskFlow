@@ -1,7 +1,7 @@
 const API_URL = import.meta.env.VITE_API_URL
 
 export interface User {
-    _id: string,
+    username: string,
     email: string
 };
 
@@ -21,9 +21,9 @@ export interface ApiError {
 };
 
 
-async function handleResponse<T>(response: Response): Promise<T>{
+async function handleResponse<T>(response: Response): Promise<T> {
     const data = await response.json();
-    if(!response.ok) {
+    if (!response.ok) {
         throw new Error((data as ApiError).error || "Something went wrong")
     }
     return data
@@ -31,18 +31,19 @@ async function handleResponse<T>(response: Response): Promise<T>{
 
 export async function getAuthenticatedUser(): Promise<User> {
     const response = await fetch(`${API_URL}/users`, {
-        credentials : "include"
-    })
+        credentials: "include"
+    });
+
 
     return handleResponse<User>(response)
 };
 
-export async function signUpUser(data: SignUpData): Promise<User>{
+export async function signUpUser(data: SignUpData): Promise<User> {
     const response = await fetch(`${API_URL}/users/signup`, {
         method: "POST",
         credentials: "include",
         headers: {
-            "Content-type" : "application/json"
+            "Content-type": "application/json"
         },
         body: JSON.stringify(data),
 
@@ -52,12 +53,12 @@ export async function signUpUser(data: SignUpData): Promise<User>{
 
 };
 
-export async function logInUser(data: LogInData): Promise<User>{
+export async function logInUser(data: LogInData): Promise<User> {
     const response = await fetch(`${API_URL}/users/login`, {
         method: "POST",
         credentials: "include",
         headers: {
-            "Content-type" : "application/json"
+            "Content-type": "application/json"
         },
         body: JSON.stringify(data),
 
@@ -67,14 +68,14 @@ export async function logInUser(data: LogInData): Promise<User>{
 
 };
 
-export async function logOutUser(): Promise<{message: string}>{
+export async function logOutUser(): Promise<{ message: string }> {
     const response = await fetch(`${API_URL}/users/logout`, {
         method: "POST",
         credentials: "include",
 
     });
 
-    return handleResponse<{message: string}>(response)
+    return handleResponse<{ message: string }>(response)
 }
 
 
