@@ -5,6 +5,7 @@ import { useLogout, useAuthenticatedUser } from '../hooks/users';
 import { useNavigate } from 'react-router-dom';
 
 
+
 const NavBar = () => {
     const { data: user, isLoading } = useAuthenticatedUser()
     const { mutate: logOut } = useLogout();
@@ -69,19 +70,39 @@ const NavBar = () => {
                                     <h1 className='text-sm'>{user.email}</h1>
                                 </div>
                             </div>
-                            <h1 className='font-semibold text-sm'>taskFlow</h1>
+                            <h1 className='font-semibold text-sm mt-4'>TaskFlow</h1>
                             <div className='divider'></div>
-                            <h1>Profile and Visibility</h1>
+                            <span className='cursor-pointer' onClick={() => handleClick(3)}>Profile and Visibility</span>
                             <h1>Cards</h1>
+                            <h1>Theme</h1>
                             <div className='divider'></div>
                             {!isLoading && user &&
                                 <div className='max-w-2xl w-full'>
-                                    <button className='cursor-pointer bg-linear-to-br from-emerald-400 to-emerald-700 py-3'onClick={handleClick1}>Log out</button>
-                                </div>}
+                                    <button type='button' className='rounded-md cursor-pointer bg-linear-to-br from-green-400 to-green-800 py-3 px-7 text-white'onClick={handleClick1}>Log out</button>
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>
             )}
+
+            {open === 3 && 
+            <div className="mt-15 mx-auto fixed inset-0 z-50 flex flex-col border w-200 h-200 text-white items-start overflow-y-scroll bg-black/80 p-4 sm:p-8 px-10">
+                <h1>Profile and Visibility</h1>
+                <img src="https://trello.com/assets/580c9958c13d47ad0daa.svg" alt="profile" />
+                <h1>Manage your personal information</h1>
+                <h2>About</h2>
+                <p>Required fields are marked with asterik * </p>
+                <form action="">
+                    <label htmlFor="username">Username</label>
+                    <input className='bg-slate-300' type="text" />
+                    <label htmlFor="bio">Bio</label>
+                    <input className='bg-slate-300' type="text" />
+                    <button className="btn btn-info">Save</button>
+
+                </form>
+            </div>
+            }
         </div>
     )
 }
