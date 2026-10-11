@@ -14,7 +14,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "http://localhost:5174",
     credentials: true,
   })
 );
@@ -76,7 +76,7 @@ app.use((error: unknown, req: Request, res: Response, next: NextFunction) => {
       error: error.message,
     });
   }
-  
+
   return res.status(500).json({
     error: "Internal server error",
   });
