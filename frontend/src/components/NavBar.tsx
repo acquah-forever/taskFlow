@@ -1,9 +1,9 @@
-import ProfileCard from './ProfileCard';
-import EditProfile from './EditProfile';
 import { useLogout, useAuthenticatedUser } from '../hooks/users';
 import { Menu, X } from 'lucide-react';
 import { useToggle } from "../hooks/open";
 import { useNavigate } from 'react-router-dom';
+import ProfileCard from './ProfileCard';
+import EditProfile from './EditProfile';
 
 const NavBar = () => {
     const { data: user, isLoading } = useAuthenticatedUser()
@@ -19,7 +19,6 @@ const NavBar = () => {
         })
     }
 
-
     return (
         <div>
             <div className="bg-pink-900 text-white flex justify-between items-center px-10 py-3">
@@ -27,9 +26,13 @@ const NavBar = () => {
                 <h1 className="text-sm sm:text-md md:text-xl font-bold">TaskFlow</h1>
                 <div className="flex items-center space-x-4">
                     {!isLoading && user && <h1 className="hidden sm:flex">Welcome</h1>}
-                    <div className='flex items-center justify-center border border-white w-8 h-8 rounded-full bg-slate-700' onClick={() => handleClick(2)}>
-                        <h1 className='cursor-pointer'>{user.username.slice(0, 2)}</h1>
-                    </div>
+                    {user ? (
+                        <button type='button' aria-label='Open account menu' className='flex items-center justify-center border border-white w-8 h-8 rounded-full bg-slate-700' onClick={() => handleClick(2)}>
+                            <span className='cursor-pointer'>{user.username.slice(0, 2)}</span>
+                        </button>
+                    ) : (
+                        <button type='button' className='btn btn-active btn-accent' onClick={() => navigate('/login')}>Login</button>
+                    )}
                     <button className='flex sm:hidden' type='button' aria-label='open-close buttons' onClick={() => handleClick(1)}>
                         {open ? <X className='cursor-pointer' size={22} /> : <Menu className='cursor-pointer' size={22} />}
                     </button>
@@ -51,11 +54,13 @@ const NavBar = () => {
                     )}
                 </div>
             )}
-            {open === 2 && <ProfileCard />}
-            {open === 3 &&
+            {open === 2 && user && <ProfileCard handleClick={handleClick} />}
+            {open === 3 && (
                 <div className="mt-15 mx-auto fixed inset-0 z-50 flex flex-col border w-160 h-200 text-black items-start overflow-y-scroll bg-white/80 p-4 sm:p-8 px-10">
-                    <EditProfile />
-                </div>}
+                    <EditProfile handleClick={handleClick} />
+                </div>
+            )}
+
         </div>
     )
 }

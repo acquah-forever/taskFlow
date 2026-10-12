@@ -1,14 +1,16 @@
-import { useToggle } from "../hooks/open";
 import { X } from 'lucide-react';
 
-const EditProfile = () => {
-    const { handleClick } = useToggle();
+type EditProfileProps = {
+    handleClick: (index: number) => void;
+};
+
+const EditProfile = ({ handleClick }: EditProfileProps) => {
 
     return (
         <div>
             <div className='w-full flex justify-between mb-7'>
                 <h1 className='text-lg sm:text-xl font-semibold'>Profile and Visibility</h1>
-                <X className='cursor-pointer' onClick={() => handleClick(null)} size={28} />
+                <button type='button' aria-label='Close profile editor' className='cursor-pointer' onClick={() => handleClick(3)}><X className='cursor-pointer' size={28} /></button>
             </div>
             <div className='flex justify-center items-center w-full mb-12'>
                 <img src="https://trello.com/assets/580c9958c13d47ad0daa.svg" alt="profile" />
