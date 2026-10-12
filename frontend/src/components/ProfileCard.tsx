@@ -23,8 +23,8 @@ const ProfileCard = ({ handleClick }: ProfileCardProps) => {
     if (!user) return null;
 
     return (
-        <div className='absolute top-10 right-0 flex justify-end text-black'>
-            <div className="card bg-base-100 w-80">
+        <div className='hidden absolute top-12 right-0 sm:flex justify-end text-black'>
+            <div className="card bg-base-100 w-60 sm:w-70">
                 <div className="card-body">
                     <div className='flex justify-between'>
                         <h1 className='uppercase text-xs text-slate-500 font-semibold'>Account</h1>
@@ -41,9 +41,9 @@ const ProfileCard = ({ handleClick }: ProfileCardProps) => {
                     </div>
                     <h1 className='font-semibold text-sm mt-4'>TaskFlow</h1>
                     <div className='divider'></div>
-                    <button type='button' className='cursor-pointer' onClick={() => handleClick(3)}>Profile and Visibility</button>
-                    <h1>Cards</h1>
-                    <h1>Theme</h1>
+                    <button type='button' className='cursor-pointer flex justify-start hover:text-blue-500 hover:underline' onClick={() => handleClick(3)}>Profile and Visibility</button>
+                    <h1 className='hover:text-blue-500 hover:underline cursor-pointer'>Cards</h1>
+                    <h1 className='hover:text-blue-500 hover:underline cursor-pointer'>Theme</h1>
                     <div className='divider'></div>
                     {!isLoading && user &&
                         <div className='max-w-2xl w-full'>
