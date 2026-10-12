@@ -23,7 +23,7 @@ const ProfileCard = ({ handleClick }: ProfileCardProps) => {
     if (!user) return null;
 
     return (
-        <div className='absolute top-15 right-127 flex justify-end'>
+        <div className='absolute top-10 right-0 flex justify-end text-black'>
             <div className="card bg-base-100 w-80">
                 <div className="card-body">
                     <div className='flex justify-between'>
