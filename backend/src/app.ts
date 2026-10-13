@@ -2,8 +2,8 @@ import "dotenv/config";
 import express from 'express'
 import session from "express-session";
 import { Request, Response, NextFunction } from "express"
-import usersRouter from './routes/users'
-import titleRouter from './routes/title'
+import UsersRouter from './routes/users'
+import TitleRouter from './routes/title'
 import createHttpError, { isHttpError } from 'http-errors'
 import env from "./util/validateEnv";
 import mongoose from "mongoose";
@@ -48,8 +48,8 @@ app.use(session({
   }),
 }));
 
-app.use("/api/users", usersRouter);
-app.use("/api/title", titleRouter);
+app.use("/api/users", UsersRouter);
+app.use("/api/title", TitleRouter);
 
 app.use((req, res, next) => {
   next(createHttpError(404, "Endpoint not found"))
