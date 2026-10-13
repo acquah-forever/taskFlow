@@ -16,7 +16,7 @@ const EditProfile = ({ handleClick }: EditProfileProps) => {
                 <img className='h-auto w-32 max-w-full sm:w-44' src="https://trello.com/assets/580c9958c13d47ad0daa.svg" alt="profile" />
             </div>
             <h2 className='mb-5 text-lg font-semibold sm:mb-7 sm:text-xl'>Manage your personal information</h2>
-            <div className='mb-5 space-y-3 break-words border bg-slate-300 p-3 text-sm text-slate-800 sm:p-4'>
+            <div className='mb-5 space-y-3 wrap-break-word border bg-slate-300 p-3 text-sm text-slate-800 sm:p-4'>
                 <p>This is an TaskFlow account. Edit your personal information and visibility settings through your TaskFlow profile.</p>
                 <p>To learn more, view our <span className='text-sky-600 underline'>Terms of Service</span> or <span className='text-sky-600 underline'>Privacy Policy</span>.</p>
 

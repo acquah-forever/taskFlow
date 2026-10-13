@@ -45,12 +45,7 @@ const NavBar = () => {
                 <div className='bg-pink-900 text-white flex sm:hidden space-y-4 px-2 py-4 border border-t-0 border-l-0 border-r-0 border-white'>
                     {!isLoading && user ? (
                         <div className='w-full px-3 flex flex-col space-y-3'>
-                            <button type='button' aria-label='Open account menu' className=' items-center justify-center border border-white w-8 h-8 rounded-full bg-slate-700 flex sm:hidden' onClick={() => handleClick(2)}>
-                                <span className='cursor-pointer'>{user.username.slice(0, 2)}</span>
-
-
-                            </button>
-
+                            <button className='cursor-pointer' type="button" onClick={() => <ProfileCard handleClick={handleClick} />}>Profile</button>
                             <div className='flex justify-end'>
                                 <button className="btn btn-active btn-accent sm:hidden" onClick={handleClick1}>Logout</button>
                             </div>
