@@ -1,27 +1,10 @@
 import Profile from "../models/profile";
 import { RequestHandler } from "express";
 import createHttpError from "http-errors";
-import { profileSchema } from "../validations/profile";
+import { profileSchema,ProfileInput } from "../validations/profile";
 import { ZodError } from "zod";
 import mongoose from "mongoose";
 
-export const getAuthenticatedUser: RequestHandler = async (req, res, next) => {
-    try {
-        const authenticatedUser = req.session.userId;
-        if (!authenticatedUser) {
-            throw createHttpError(401, "User not authenticated")
-        };
-        const existingUser = await Profile.findOne({ user: authenticatedUser }).exec()
-        if (!existingUser) {
-            throw createHttpError(404, "User not found")
-        };
-        res.status(200).json(authenticatedUser)
-
-    }
-    catch (error) {
-        next(error)
-    };
-};
 
 export const getProfile: RequestHandler = async (req, res, next) => {
     try {
@@ -30,9 +13,9 @@ export const getProfile: RequestHandler = async (req, res, next) => {
             throw createHttpError(401, "User not authenticated")
         };
 
-        const profile = await Profile.find({ user: authenticatedUser }).exec();
+        const profile = await Profile.findOne({ user: authenticatedUser }).exec();
         if (!profile) {
-            throw createHttpError(400, "Profile not found")
+            throw createHttpError(404, "Profile not found")
         }
         res.status(200).json(profile)
 
@@ -43,12 +26,7 @@ export const getProfile: RequestHandler = async (req, res, next) => {
 
 }
 
-interface ProfileValue {
-    position: string,
-    bio: string
-}
-
-export const createProfile: RequestHandler<unknown, unknown, ProfileValue, unknown> = async (req, res, next) => {
+export const createProfile: RequestHandler<unknown, unknown, ProfileInput, unknown> = async (req, res, next) => {
     try {
         const authenticatedUser = req.session.userId;
         if (!authenticatedUser) {
@@ -57,6 +35,12 @@ export const createProfile: RequestHandler<unknown, unknown, ProfileValue, unkno
 
         const validatedData = profileSchema.parse(req.body);
         const { position, bio } = validatedData;
+
+        const existingProfile = await Profile.exists({ user: authenticatedUser })
+
+        if (existingProfile) {
+            throw createHttpError(409, "Profile already exists")
+        }
 
         const newProfile = await Profile.create({
             user: authenticatedUser,
@@ -69,13 +53,16 @@ export const createProfile: RequestHandler<unknown, unknown, ProfileValue, unkno
     }
     catch (error) {
         if (error instanceof ZodError) {
-            throw createHttpError(400, "Invalid data")
+            throw createHttpError(400,{
+                message: "Invalid data",
+                errors: error.issues
+            })
         }
         next(error)
     }
 };
 
-interface UpdateValue extends Partial<ProfileValue> { };
+interface UpdateValue extends Partial<ProfileInput> { };
 
 export const updatedProfile: RequestHandler<{ id: string }, unknown, UpdateValue, unknown> = async (req, res, next) => {
     try {
@@ -110,18 +97,10 @@ export const updatedProfile: RequestHandler<{ id: string }, unknown, UpdateValue
     }
     catch (error) {
         if (error instanceof ZodError) {
-            throw createHttpError(400, "Invalid data")
-        }
-
-        if (
-            typeof error === "object" &&
-            error !== null &&
-            "code" in error &&
-            error.code === 11000
-        ) {
-            return res.status(409).json({
-                error: "A record with a unique field already exists.",
-            });
+            throw createHttpError(400, {
+                message: "Invalid data",
+                errors: error.issues
+            })
         }
         next(error)
     }

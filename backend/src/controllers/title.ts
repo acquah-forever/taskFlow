@@ -1,29 +1,9 @@
 import Title from "../models/title";
-import Users from "../models/users";
 import { RequestHandler } from "express";
 import createHttpError from "http-errors";
 import mongoose from "mongoose";
-import { titlesSchema } from "../validations/title";
+import { titlesSchema, TitleInput } from "../validations/title";
 import { ZodError } from "zod";
-
-
-export const getAuthenticatedUser: RequestHandler = async (req, res, next) => {
-    try {
-        const authenticatedUser = req.session.userId;
-        if (!authenticatedUser) {
-            throw createHttpError(401, "User not authenticated")
-        };
-        const existingUser = await Users.findOne({ user: authenticatedUser }).exec();
-        if (!existingUser) {
-            throw createHttpError(404, "User not found")
-        };
-        res.status(200).json(authenticatedUser)
-
-    }
-    catch (error) {
-        next(error)
-    }
-};
 
 
 export const getTitle: RequestHandler = async (req, res, next) => {
@@ -33,7 +13,7 @@ export const getTitle: RequestHandler = async (req, res, next) => {
             throw createHttpError(401, "User not authenticated")
         };
 
-        const title = await Title.find({ user: authenticatedUser }).exec();
+        const title = await Title.findOne({ user: authenticatedUser }).exec();
         if (!title) {
             throw createHttpError(404, "Board not found")
         };
@@ -45,12 +25,8 @@ export const getTitle: RequestHandler = async (req, res, next) => {
     }
 };
 
-interface TitleValue {
-    title: string,
-    description: string
-};
 
-export const createTitle: RequestHandler<unknown, unknown, TitleValue, unknown> = async (req, res, next) => {
+export const createTitle: RequestHandler<unknown, unknown, TitleInput, unknown> = async (req, res, next) => {
     try {
         const authenticatedUser = req.session.userId;
         if (!authenticatedUser) {
@@ -78,7 +54,7 @@ export const createTitle: RequestHandler<unknown, unknown, TitleValue, unknown> 
 
 };
 
-interface UpdateTitle extends Partial<TitleValue> { }
+interface UpdateTitle extends Partial<TitleInput> { }
 
 export const updateTitle: RequestHandler<{ id: string }, unknown, UpdateTitle, unknown> = async (req, res, next) => {
     try {
@@ -88,7 +64,6 @@ export const updateTitle: RequestHandler<{ id: string }, unknown, UpdateTitle, u
         };
 
         const validateData = titlesSchema.parse(req.body);
-
         const { title, description } = validateData;
 
         const titleId = req.params.id
@@ -117,17 +92,6 @@ export const updateTitle: RequestHandler<{ id: string }, unknown, UpdateTitle, u
         if (error instanceof ZodError) {
             throw createHttpError(400, "Invalid data")
         }
-
-        if (
-            typeof error === "object" &&
-            error !== null &&
-            "code" in error &&
-            error.code === 11000
-        ) {
-            return res.status(409).json({
-                error: "A record with a unique field already exists.",
-            });
-        }
         next(error)
     }
 };
@@ -142,7 +106,6 @@ export const deleteTitle: RequestHandler = async (req, res, next) => {
         }
 
         const titleId = req.params.id
-
         if (!mongoose.isValidObjectId(titleId)) {
             throw createHttpError(400, "Invalid title id")
         }
