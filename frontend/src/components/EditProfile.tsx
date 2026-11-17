@@ -12,8 +12,8 @@ const EditProfile = ({ handleClick }: EditProfileProps) => {
                 <h1 className='text-lg font-semibold sm:text-xl'>Profile and Visibility</h1>
                 <button type='button' aria-label='Close profile editor' className='shrink-0 cursor-pointer' onClick={() => handleClick(3)}><X className='cursor-pointer' size={28} /></button>
             </div>
-            <div className='mb-8 flex w-full items-center justify-center sm:mb-12'>
-                <img className='h-auto w-32 max-w-full sm:w-44' src="https://trello.com/assets/580c9958c13d47ad0daa.svg" alt="profile" />
+            <div className='mb-8 flex max-w-2xl items-center justify-center sm:mb-12'>
+                <img className='w-full' src="https://trello.com/assets/580c9958c13d47ad0daa.svg" alt="profile" />
             </div>
             <h2 className='mb-5 text-lg font-semibold sm:mb-7 sm:text-xl'>Manage your personal information</h2>
             <div className='mb-5 space-y-3 wrap-break-word border bg-slate-300 p-3 text-sm text-slate-800 sm:p-4'>
@@ -25,7 +25,7 @@ const EditProfile = ({ handleClick }: EditProfileProps) => {
             <p className='mb-6 text-sm sm:mb-7'>Required fields are marked with asterik <span className='text-red-500'>*</span> </p>
             <form className='w-full' action="">
                 <div className='flex flex-col space-y-2 mb-5'>
-                    <label className='font-semibold' htmlFor="username">Username</label>
+                    <label className='font-semibold' htmlFor="position">Position</label>
                     <input id='username' className='w-full min-w-0 rounded-md border bg-white p-2 outline-none' type="text" />
                 </div>
                 <div className='flex flex-col space-y-2'>
