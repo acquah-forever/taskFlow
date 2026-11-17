@@ -1,11 +1,13 @@
 import Users from '../models/users';
 import { RequestHandler } from 'express';
 import createHttpError from 'http-errors'
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcrypt';
+import { Types } from "mongoose";
 
 
-function userResponse(user: { username: string, email: string }) {
+function userResponse(user: { _id: Types.ObjectId, username: string, email: string }) {
     return {
+        _id: user._id.toString(),
         username: user.username,
         email: user.email
     }
