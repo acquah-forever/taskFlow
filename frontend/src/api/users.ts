@@ -18,7 +18,7 @@ export interface LogInData {
     password: string
 };
 
-export interface ApiError {
+interface ApiError {
     error: string
 };
 
@@ -35,7 +35,6 @@ export async function getAuthenticatedUser(): Promise<User> {
     const response = await fetch(`${API_URL}/users`, {
         credentials: "include"
     });
-
 
     return handleResponse<User>(response)
 };
