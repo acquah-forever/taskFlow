@@ -4,6 +4,7 @@ import session from "express-session";
 import { Request, Response, NextFunction } from "express"
 import UsersRouter from './routes/users'
 import TitleRouter from './routes/title'
+import ProfileRouter from './routes/profile'
 import createHttpError, { isHttpError } from 'http-errors'
 import env from "./util/validateEnv";
 import mongoose from "mongoose";
@@ -50,6 +51,8 @@ app.use(session({
 
 app.use("/api/users", UsersRouter);
 app.use("/api/title", TitleRouter);
+app.use("/api/profile", ProfileRouter);
+
 
 app.use((req, res, next) => {
   next(createHttpError(404, "Endpoint not found"))

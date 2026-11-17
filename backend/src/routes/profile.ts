@@ -1,10 +1,11 @@
 import express from "express";
-import { getProfile, createProfile, updateProfile } from '../controllers/Profile';
+import { getProfile, createProfile, updatedProfile } from '../controllers/profile';
 
-const router = express.Router;
+const router = express.Router();
 
 router.get('/', getProfile);
 router.post('/', createProfile);
-router.post('/:id', updateProfile);
+router.patch('/:id', updatedProfile);
+
 
 export default router;

@@ -29,6 +29,7 @@
     "dotenv": "^18.0.6",
     "envalid": "^8.2.0",
     "express": "^5.2.1",
+    "express-rate-limit": "^8.7.4",
     "express-session": "^1.19.0",
     "http-errors": "^2.0.1",
     "mongoose": "^9.11.1",

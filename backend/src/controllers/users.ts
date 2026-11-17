@@ -1,11 +1,15 @@
 import Users from '../models/users';
 import { RequestHandler } from 'express';
 import createHttpError from 'http-errors'
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcrypt';
+import { signupSchema,loginSchema, SignupInput, LoginInput} from "../validations/users"
+import { Types } from "mongoose";
+import { ZodError } from 'zod';
 
 
-function userResponse(user: { username: string, email: string }) {
+function userResponse(user: { _id: Types.ObjectId, username: string, email: string }) {
     return {
+        _id: user._id.toString(),
         username: user.username,
         email: user.email
     }
@@ -35,48 +39,18 @@ export const getAuthenticatedUser: RequestHandler = async (req, res, next) => {
 
 };
 
-interface SignUp {
-    username: string,
-    email: string,
-    password: string
-}
 
-export const signup: RequestHandler<unknown, unknown, SignUp, unknown> = async (req, res, next) => {
+export const signup: RequestHandler<unknown, unknown, SignupInput, unknown> = async (req, res, next) => {
     try {
+        const validation = signupSchema.parse(req.body);
+        const {username, email, password: passwordRaw} = validation
 
-        const { username, email, password: passwordRaw } = req.body
-
-        if (typeof username !== 'string' || typeof email !== 'string' || typeof passwordRaw !== 'string') {
-            throw createHttpError(400, "Invalid Parameters")
-        }
-
-        const usernameTrimmed = username.trim()
-        const emailTrimmed = email.trim()
-        const password = passwordRaw
-
-
-        if (!usernameTrimmed || !emailTrimmed || !password) {
-            throw createHttpError(400, "Parameters Missing")
-        }
-
-        if (usernameTrimmed.length > 50) {
-            throw createHttpError(400, "Username is too lengthy")
-        }
-
-        if (emailTrimmed.length > 50) {
-            throw createHttpError(400, "Email is too lenghty")
-        }
-
-        if (password.length > 128) {
-            throw createHttpError(400, "Password is too long")
-        }
-
-        const existingUsername = await Users.exists({ username: usernameTrimmed })
+        const existingUsername = await Users.exists({ username: username })
         if (existingUsername) {
             throw createHttpError(409, "Username already exists")
         }
 
-        const existingEmail = await Users.exists({ email: emailTrimmed })
+        const existingEmail = await Users.exists({ email: email })
         if (existingEmail) {
             throw createHttpError(409, "Email already exists")
         }
@@ -84,70 +58,49 @@ export const signup: RequestHandler<unknown, unknown, SignUp, unknown> = async (
         const passwordHashed = await bcrypt.hash(passwordRaw, 12)
 
         const newUser = await Users.create({
-            username: usernameTrimmed,
-            email: emailTrimmed,
+            username,
+            email,
             password: passwordHashed
 
         })
 
         req.session.regenerate((error) => {
             if (error) {
-                console.error("Session regeneration failed:", error);
                 return next(error);
             }
             req.session.userId = newUser._id.toString();
 
             req.session.save((error) => {
-                if (error) {
-                    console.error("Session save failed:", error);
-                    return next(error);
+                if(error) {
+                    return next(error)
                 }
                 res.status(200).json(userResponse(newUser));
             });
         });
     }
     catch (error) {
-        if (
-            typeof error === "object" &&
-            error !== null &&
-            "code" in error &&
-            error.code === 11000
-        ) {
-            return res.status(409).json({
-                error: "A record with a unique field already exists.",
-            });
+        if (error instanceof ZodError) {
+            throw createHttpError(400,{
+                message: "Invalid data",
+                errors: error.issues
+            })
         }
         return next(error)
     }
 }
 
-interface LogIn {
-    username: string,
-    password: string
-}
 
-export const login: RequestHandler<unknown, unknown, LogIn, unknown> = async (req, res, next) => {
+export const login: RequestHandler<unknown, unknown, LoginInput, unknown> = async (req, res, next) => {
     try {
+        const validation = loginSchema.parse(req.body);
+        const { username, password:passwordRaw } = validation;
 
-        const { username, password: passwordRaw } = req.body
-
-        if (typeof username !== "string" || typeof passwordRaw !== "string") {
-            throw createHttpError(400, "Invalid Parameters")
-        }
-
-        const usernameTrimmed = username.trim()
-        const password = passwordRaw
-
-        if (!usernameTrimmed || !password) {
-            throw (createHttpError(400, "Parameters missing"))
-        }
-
-        const existingUser = await Users.findOne({ username: usernameTrimmed }).select("+username +password").exec()
-        if (!existingUser) {
+        const user = await Users.findOne({ username }).select("+username +password").exec()
+        if (!user) {
             throw createHttpError(401, "Invalid Credentials")
         }
 
-        const passwordMatch = await bcrypt.compare(password, existingUser.password)
+        const passwordMatch = await bcrypt.compare(passwordRaw, user.password)
         if (!passwordMatch) {
             throw createHttpError(401, "Invalid Credentials")
         }
@@ -157,20 +110,26 @@ export const login: RequestHandler<unknown, unknown, LogIn, unknown> = async (re
                 return next(error)
             }
 
-            req.session.userId = existingUser._id.toString()
+            req.session.userId = user._id.toString()
         })
 
         req.session.save((error) => {
-            if (error) {
+            if(error) {
                 return next(error)
             }
-
-            res.status(200).json(userResponse(existingUser))
+            res.status(200).json(userResponse(user))
         })
 
     }
     catch (error) {
-        next(error)
+        if (error instanceof ZodError) {
+            throw createHttpError(400,{
+                message: "Invalid data",
+                errors: error.issues
+
+            })
+        }
+        return next(error)
     }
 
 }
