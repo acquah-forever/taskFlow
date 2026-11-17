@@ -1,6 +1,8 @@
-const API_URL = import.meta.env.VITE_API_URL
+const API_URL = import.meta.env.VITE_API_URL?.trim();
+if(!API_URL) throw new Error("VITE_API_URL is not set");
 
 export interface User {
+    _id: string,
     username: string,
     email: string
 };
