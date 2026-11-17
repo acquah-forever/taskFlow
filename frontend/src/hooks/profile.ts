@@ -15,8 +15,10 @@ export function useCreateProfile() {
 
     return useMutation({
         mutationFn: (data: ProfileInput) => createProfile(data),
-        onSuccess: (newProfile) => {
-            queryClient.setQueryData(['profile'], newProfile)
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ['profile']
+            })
         }
     })
 };
@@ -26,8 +28,10 @@ export function useUpdateProfile() {
 
     return useMutation({
         mutationFn: ({id, data} : {id: string, data: ProfileInput}) => updateProfile(id, data),
-        onSuccess: (updatedProfile) => {
-            queryClient.setQueryData(['profile'], updatedProfile)
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ['profiile']
+            })
         }
     })
 };

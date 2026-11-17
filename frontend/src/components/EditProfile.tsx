@@ -1,16 +1,42 @@
+import { useGetProfile, useCreateProfile, useUpdateProfile } from '../hooks/profile';
+import { useForm } from 'react-hook-form';
 import { X } from 'lucide-react';
+
 
 type EditProfileProps = {
     handleClick: (index: number) => void;
 };
 
+interface FormValue {
+    position: string,
+    bio: string
+}
+
 const EditProfile = ({ handleClick }: EditProfileProps) => {
+    const { register, handleSubmit, formState: {errors} } = useForm<FormValue>();
+    const { data:profile } = useGetProfile();
+    const { mutate:createProfile, isPending:isCreating } = useCreateProfile();
+    const { mutate:updateProfile, isPending:isUpdating } = useUpdateProfile();
+
+
+
+
+    function OnSubmit(data: FormValue) {
+        if (profile) {
+            updateProfile(
+                {data, id: profile_id}, {
+                    onSuccess: () => {
+                        alert("updated")
+                    }
+                }
+            )
+
+    }
 
     return (
         <div className='w-full'>
             <div className='mb-6 flex w-full items-start justify-between gap-4 sm:mb-7'>
                 <h1 className='text-lg font-semibold sm:text-xl'>Profile and Visibility</h1>
-                <button type='button' aria-label='Close profile editor' className='shrink-0 cursor-pointer' onClick={() => handleClick(3)}><X className='cursor-pointer' size={28} /></button>
             </div>
             <div className='mb-8 flex max-w-2xl items-center justify-center sm:mb-12'>
                 <img className='w-full' src="https://trello.com/assets/580c9958c13d47ad0daa.svg" alt="profile" />
@@ -23,19 +49,20 @@ const EditProfile = ({ handleClick }: EditProfileProps) => {
             </div>
             <h2 className='font-semibold mb-3'>About</h2>
             <p className='mb-6 text-sm sm:mb-7'>Required fields are marked with asterik <span className='text-red-500'>*</span> </p>
-            <form className='w-full' action="">
+            <form className='w-full' action=""onSubmit={handleSubmit(OnSubmit)}>
                 <div className='flex flex-col space-y-2 mb-5'>
                     <label className='font-semibold' htmlFor="position">Position</label>
-                    <input id='username' className='w-full min-w-0 rounded-md border bg-white p-2 outline-none' type="text" />
+                    <input id='username' className='w-full min-w-0 rounded-md border bg-white p-2 outline-none' type="text"{...register('position', {required: "Indicte your position"})} />
+                    {errors.position && <p className='text-xs text-red-500'>{errors.position.message}</p>}
                 </div>
                 <div className='flex flex-col space-y-2'>
                     <label className='font-semibold' htmlFor="bio">Bio</label>
-                    <input id='bio' className='w-full min-w-0 rounded-md border bg-white p-2 outline-none' type="text" />
+                    <input id='bio' className='w-full min-w-0 rounded-md border bg-white p-2 outline-none' type="text"{...register("bio", {required: "State your bio"})} />
+                    {errors.bio && <p className='text-xs text-red-500'>{errors.bio.message}</p>}
                 </div>
                 <div className='flex justify-end mt-7'>
-                    <button type='button' className="btn btn-info">Save</button>
+                    <button type='button' disabled={isPending} className="btn btn-info">{isPending ? "Saving" : "Save"}</button>
                 </div>
-
             </form>
         </div>
 
