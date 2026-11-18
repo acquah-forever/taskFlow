@@ -1,14 +1,16 @@
 import { useLogout, useAuthenticatedUser } from '../hooks/users';
 import { useNavigate } from 'react-router-dom';
 import { X } from 'lucide-react'
+import { useGetProfile } from '../hooks/profile';
 
 type ProfileCardProps = {
     handleClick: (index: number) => void;
 };
 
 const ProfileCard = ({ handleClick }: ProfileCardProps) => {
-    const { data: user, isLoading } = useAuthenticatedUser()
-    const { mutate: logOut } = useLogout();
+    const { data: user, isLoading: isProfileLoading } = useAuthenticatedUser()
+    const { data: profile } = useGetProfile();
+    const { mutate: logOut, isPending } = useLogout();
     const navigate = useNavigate();
 
 
@@ -39,13 +41,22 @@ const ProfileCard = ({ handleClick }: ProfileCardProps) => {
                             <h1 className='text-sm'>{user.email}</h1>
                         </div>
                     </div>
-                    <h1 className='font-semibold text-sm mt-4'>TaskFlow</h1>
+                    <div className='flex items-center justify-between mt-2'>
+                        <h1 className='font-semibold text-sm'>TaskFlow</h1>
+                        <button className='cursor-pointer px-2 py-1 text-white rounded-lg bg-sky-600 text-sm'>Edit Profile</button>
+                    </div>
+                    {!isProfileLoading && profile && (
+                        <div className='mt-2 space-y-1'>
+                            <p className='text-xs font-semibold text-slate-600'>{profile.position}</p>
+                            <p className='text-xs text-slate-500'>{profile.bio}</p>
+                        </div>
+                    )}
                     <div className='divider'></div>
                     <button type='button' className='cursor-pointer flex justify-start hover:text-blue-500 hover:underline' onClick={() => handleClick(3)}>Profile and Visibility</button>
                     <h1 className='hover:text-blue-500 hover:underline cursor-pointer'>Cards</h1>
                     <h1 className='hover:text-blue-500 hover:underline cursor-pointer'>Theme</h1>
                     <div className='divider'></div>
-                    {!isLoading && user &&
+                    {!isPending && user &&
                         <div className='max-w-2xl w-full'>
                             <button type='button' className='rounded-md cursor-pointer bg-linear-to-br from-green-400 to-green-800 py-3 px-7 text-white' onClick={handleClick1}>Log out</button>
                         </div>

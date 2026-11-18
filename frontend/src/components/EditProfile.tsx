@@ -1,8 +1,7 @@
 import { useGetProfile, useCreateProfile, useUpdateProfile } from '../hooks/profile';
 import { useForm } from 'react-hook-form';
+import { useState } from 'react';
 import { X } from "lucide-react"
-
-
 
 type EditProfileProps = {
     handleClick: (index: number) => void;
@@ -18,10 +17,9 @@ const EditProfile = ({ handleClick }: EditProfileProps) => {
     const { data: profile } = useGetProfile();
     const { mutate: createProfile, isPending: isCreating } = useCreateProfile();
     const { mutate: updateProfile, isPending: isUpdating } = useUpdateProfile();
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
+    const [submitError, setSubmitError] = useState<string | null>(null)
     const isPending = isCreating || isUpdating;
-
-
-
 
     function OnSubmit(data: FormValue) {
 
@@ -29,20 +27,20 @@ const EditProfile = ({ handleClick }: EditProfileProps) => {
             updateProfile(
                 { data, id: profile._id }, {
                 onSuccess: () => {
-                    alert("updated")
+                    setSuccessMessage("Profile updated successfully")
                 },
                 onError: () => {
-                    alert("error")
+                    setSubmitError("Failed to update profile")
                 }
             }
             )
         } else {
             createProfile(data, {
                 onSuccess: () => {
-                    alert("created")
+                    setSuccessMessage("Profile created successfully")
                 },
                 onError: () => {
-                    alert("error")
+                    setSubmitError("Failed to create profile")
                 }
             })
 
@@ -67,18 +65,20 @@ const EditProfile = ({ handleClick }: EditProfileProps) => {
             <p className='mb-6 text-sm sm:mb-7'>Required fields are marked with asterik <span className='text-red-500'>*</span> </p>
             <form className='w-full' onSubmit={handleSubmit(OnSubmit)}>
                 <div className='flex flex-col space-y-2 mb-5'>
-                    <label className='font-semibold' htmlFor="position">Position</label>
-                    <input id='username' className='w-full min-w-0 rounded-md border bg-white p-2 outline-none' type="text"{...register('position', { required: "Indicte your position" })} />
+                    <label className='font-semibold' htmlFor="position">Position<span className='text-red-500'>*</span></label>
+                    <input id='position' className='w-full min-w-0 rounded-md border bg-white p-2 outline-none' type="text"{...register('position', { required: "Indicte your position" })} />
                     {errors.position && <p className='text-xs text-red-500'>{errors.position.message}</p>}
                 </div>
                 <div className='flex flex-col space-y-2'>
-                    <label className='font-semibold' htmlFor="bio">Bio</label>
+                    <label className='font-semibold' htmlFor="bio">Bio<span className='text-red-500'>*</span></label>
                     <input id='bio' className='w-full min-w-0 rounded-md border bg-white p-2 outline-none' type="text"{...register("bio", { required: "State your bio" })} />
                     {errors.bio && <p className='text-xs text-red-500'>{errors.bio.message}</p>}
                 </div>
                 <div className='flex justify-end mt-7'>
                     <button type='submit' disabled={isPending} className="btn btn-info">{isPending ? "Saving" : "Save"}</button>
                 </div>
+                {successMessage && <p className='text-sm text-green-500'>{successMessage}</p>}
+                {submitError && <p className='text-sm text-red-500'>{submitError}</p>}
             </form>
         </div>
 

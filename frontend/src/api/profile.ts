@@ -3,14 +3,12 @@ if(!API_URL) throw new Error("VITE_API_URL is not set");
 
 export interface Profile {
     _id: string,
-    user: string,
     position: string,
     bio: string,
-    createdAt: string,
     updatedAt: string
 };
 
-export type ProfileInput = Omit<Profile, "id" | "user" | "createdAt" | "updatesAt">;
+export type ProfileInput = Omit<Profile, "_id" | "updatedAt">;
 
 export async function getProfile(): Promise<Profile | null> {
     const response = await fetch(`${API_URL}/profile`, {
