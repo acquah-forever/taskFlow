@@ -30,7 +30,7 @@ export function useUpdateProfile() {
         mutationFn: ({id, data} : {id: string, data: ProfileInput}) => updateProfile(id, data),
         onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: ['profiile']
+                queryKey: ['profile']
             })
         }
     })

@@ -1,7 +1,7 @@
 import { useGetProfile, useCreateProfile, useUpdateProfile } from '../hooks/profile';
+import { useAuthenticatedUser } from '../hooks/users';
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { X } from "lucide-react"
 
 type EditProfileProps = {
@@ -15,24 +15,21 @@ interface FormValue {
 
 const EditProfile = ({ handleClick }: EditProfileProps) => {
     const { register, handleSubmit, formState: { errors } } = useForm<FormValue>();
+    const { data: user } = useAuthenticatedUser();
     const { data: profile } = useGetProfile();
     const { mutate: createProfile, isPending: isCreating } = useCreateProfile();
     const { mutate: updateProfile, isPending: isUpdating } = useUpdateProfile();
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [submitError, setSubmitError] = useState<string | null>(null)
-    const navigate = useNavigate()
     const isPending = isCreating || isUpdating;
 
     function OnSubmit(data: FormValue) {
 
-        if (profile) {
+        if (profile._id === user._id) {
             updateProfile(
                 { data, id: profile._id }, {
                 onSuccess: () => {
                     setSuccessMessage("Profile updated successfully")
-                    navigate('/')
-                    
-
                 },
                 onError: () => {
                     setSubmitError("Failed to update profile")

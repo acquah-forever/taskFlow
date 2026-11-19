@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { X } from 'lucide-react'
 import { useGetProfile } from '../hooks/profile';
 import { ClipLoader } from "react-spinners";
+import { useOnClickOutside } from "usehooks-ts";
+import { useRef } from 'react';
 
 type ProfileCardProps = {
     handleClick: (index: number) => void;
@@ -13,6 +15,9 @@ const ProfileCard = ({ handleClick }: ProfileCardProps) => {
     const { data: profile } = useGetProfile();
     const { mutate: logOut, isPending } = useLogout();
     const navigate = useNavigate();
+    const cardRef = useRef<HTMLDivElement>(null)
+    useOnClickOutside(cardRef, () => handleClick(null));
+
 
 
     function handleClick1() {
@@ -34,7 +39,7 @@ const ProfileCard = ({ handleClick }: ProfileCardProps) => {
     }
 
     return (
-        <div className='hidden absolute top-12 right-0 sm:flex justify-end text-black'>
+        <div ref={cardRef} className='hidden absolute top-12 right-0 sm:flex justify-end text-black'>
             <div className="card bg-base-100 w-60 sm:w-70">
                 <div className="card-body">
                     <div className='flex justify-between'>
