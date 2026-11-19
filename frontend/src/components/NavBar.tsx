@@ -11,7 +11,7 @@ const NavBar = () => {
     const { open, handleClick } = useToggle();
     const navigate = useNavigate();
 
-    function handleClick1() {
+    function handleLogout() {
         logOut(undefined, {
             onSuccess: () => {
                 navigate('/login')
@@ -47,7 +47,7 @@ const NavBar = () => {
                         <div className='w-full px-3 flex flex-col space-y-3'>
                             <button className='cursor-pointer' type="button" onClick={() => <ProfileCard handleClick={handleClick} />}>Profile</button>
                             <div className='flex justify-end'>
-                                <button className="btn btn-active btn-accent sm:hidden" onClick={handleClick1}>Logout</button>
+                                <button className="btn btn-active btn-accent sm:hidden" onClick={handleLogout}>Logout</button>
                             </div>
                         </div>
 

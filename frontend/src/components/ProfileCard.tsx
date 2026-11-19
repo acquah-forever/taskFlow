@@ -39,7 +39,9 @@ const ProfileCard = ({ handleClick }: ProfileCardProps) => {
                 <div className="card-body">
                     <div className='flex justify-between'>
                         <h1 className='uppercase text-xs text-slate-500 font-semibold'>Account</h1>
-                        <button type='button' aria-label='Close account menu' onClick={() => handleClick(2)}> <X className='cursor-pointer' /></button>
+                        <button type='button' aria-label='Close account menu' onClick={() => handleClick(2)}>
+                            <X className='cursor-pointer'  size={20}/>
+                        </button>
                     </div>
                     <div className='flex space-x-2'>
                         <div className='flex items-center justify-center border border-white w-12 h-12 rounded-full bg-slate-700' >
@@ -56,20 +58,16 @@ const ProfileCard = ({ handleClick }: ProfileCardProps) => {
                     </div>
                     {!isProfileLoading && !profile ?
                         (
-                            <div className="flex justify-center items-center min-h-screen">
-                                <ClipLoader size={37} color="black" />
+                            <div className="mt-4 flex justify-center items-center">
+                                <ClipLoader size={30} color="black" />
                             </div>
                         ) : (
-                            <div>
+                            <div className='mt-3'>
                                 <p>{profile.position}</p>
                                 <p>{profile.bio}</p>
-
                             </div>
                         )
                     }
-                    <div className='divider'></div>
-                    <h1 className='hover:text-blue-500 hover:underline cursor-pointer'>Cards</h1>
-                    <h1 className='hover:text-blue-500 hover:underline cursor-pointer'>Theme</h1>
                     <div className='divider'></div>
                     {!isPending && user &&
                         <div className='max-w-2xl w-full'>

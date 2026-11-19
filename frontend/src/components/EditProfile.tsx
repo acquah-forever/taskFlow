@@ -80,7 +80,7 @@ const EditProfile = ({ handleClick }: EditProfileProps) => {
                     {errors.bio && <p className='text-xs text-red-500'>{errors.bio.message}</p>}
                 </div>
                 <div className='flex justify-end mt-7'>
-                    <button type='submit' disabled={isPending} className="btn btn-info">{isPending ? "Saving" : "Save"}</button>
+                    <button type='submit' disabled={isPending} className="btn btn-info text-white">{isPending ? "Saving" : "Save"}</button>
                 </div>
                 {successMessage && <p className='text-sm text-green-500'>{successMessage}</p>}
                 {submitError && <p className='text-sm text-red-500'>{submitError}</p>}
