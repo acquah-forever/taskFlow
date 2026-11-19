@@ -34,13 +34,13 @@ const Board = () => {
                 open &&
                 <div className="mt-2 card bg-base-100 w-60 sm:w-80 h-75 shadow-sm">
                     <div className="card-body">
-                        <form onSubmit={handleSubmit(onSubmit)} action="">
+                        <form onSubmit={handleSubmit(onSubmit)}>
                             <div className='flex justify-end'>
                                 <X className='cursor-pointer' size={23} onClick={() => handleOpen(2)}/>
                             </div>
                             <h2 className="card-title text-sm font-normal mb-1">Board Title</h2>
                             <input type="text" placeholder="Type here" className="input mb-1 outline-0"
-                                {...register('title', { required: "Board title is required" })} />
+                                {...register('title', { required: "Title is required" })} />
                             {errors.title && <p className='text-xs text-red-500 mb-2'>{errors.title.message}</p>}
 
                             <h2 className="card-title text-sm font-normal mb-1">Board Description</h2>
