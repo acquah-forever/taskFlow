@@ -2,6 +2,7 @@ import { useLogout, useAuthenticatedUser } from '../hooks/users';
 import { useNavigate } from 'react-router-dom';
 import { X } from 'lucide-react'
 import { useGetProfile } from '../hooks/profile';
+import { ClipLoader } from "react-spinners";
 
 type ProfileCardProps = {
     handleClick: (index: number) => void;
@@ -24,6 +25,14 @@ const ProfileCard = ({ handleClick }: ProfileCardProps) => {
 
     if (!user) return null;
 
+    if (isProfileLoading) {
+        return (
+            <div className="flex justify-center items-center min-h-screen">
+                <ClipLoader size={37} color="black" />
+            </div>
+        )
+    }
+
     return (
         <div className='hidden absolute top-12 right-0 sm:flex justify-end text-black'>
             <div className="card bg-base-100 w-60 sm:w-70">
@@ -43,16 +52,22 @@ const ProfileCard = ({ handleClick }: ProfileCardProps) => {
                     </div>
                     <div className='flex items-center justify-between mt-2'>
                         <h1 className='font-semibold text-sm'>TaskFlow</h1>
-                        <button className='cursor-pointer px-2 py-1 text-white rounded-lg bg-sky-600 text-sm'>Edit Profile</button>
+                        <button className='cursor-pointer px-4 border-black border-2 py-1 text-white rounded-lg bg-sky-600 text-sm' onClick={() => handleClick(3)}>Edit Profile</button>
                     </div>
-                    {!isProfileLoading && profile && (
-                        <div className='mt-2 space-y-1'>
-                            <p className='text-xs font-semibold text-slate-600'>{profile.position}</p>
-                            <p className='text-xs text-slate-500'>{profile.bio}</p>
-                        </div>
-                    )}
+                    {!isProfileLoading && !profile ?
+                        (
+                            <div className="flex justify-center items-center min-h-screen">
+                                <ClipLoader size={37} color="black" />
+                            </div>
+                        ) : (
+                            <div>
+                                <p>{profile.position}</p>
+                                <p>{profile.bio}</p>
+
+                            </div>
+                        )
+                    }
                     <div className='divider'></div>
-                    <button type='button' className='cursor-pointer flex justify-start hover:text-blue-500 hover:underline' onClick={() => handleClick(3)}>Profile and Visibility</button>
                     <h1 className='hover:text-blue-500 hover:underline cursor-pointer'>Cards</h1>
                     <h1 className='hover:text-blue-500 hover:underline cursor-pointer'>Theme</h1>
                     <div className='divider'></div>
