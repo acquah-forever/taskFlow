@@ -1,12 +1,14 @@
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { getProfile, createProfile, updateProfile, type ProfileInput } from "../api/profile";
 
-export function useGetProfile() {
+export function useGetProfile(userId?: string) {
     return useQuery({
-        queryKey: ['profile'],
+        queryKey: ['profile', userId],
         queryFn: getProfile,
         refetchOnWindowFocus: false,
-        retry: false
+        retry: false,
+        enabled: !!userId
+        // prevents profile request from running before the authenticated user has been retrieved.
     })
 };
 
@@ -30,7 +32,7 @@ export function useUpdateProfile() {
         mutationFn: ({id, data} : {id: string, data: ProfileInput}) => updateProfile(id, data),
         onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: ['profiile']
+                queryKey: ['profile']
             })
         }
     })

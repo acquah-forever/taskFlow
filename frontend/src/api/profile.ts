@@ -14,7 +14,11 @@ export async function getProfile(): Promise<Profile | null> {
     const response = await fetch(`${API_URL}/profile`, {
         credentials: "include"
     })
-    if(!response.ok) {
+
+        if (response.status === 404) {
+        return null;
+    }
+        if(!response.ok) {
         throw new Error ("Failed to get Profile. Try again later")
     };
 
@@ -31,9 +35,12 @@ export async function createProfile(data: ProfileInput): Promise<Profile> {
         body: JSON.stringify(data)
 
     })
-    if(!response.ok) {
-        throw new Error("Failed to create Profile. Try again later")
-    }
+
+    if (!response.ok) {
+    const error = await response.json().catch(() => null);
+
+    throw new Error(error?.message || `Failed to create profile: ${response.status}`);
+}
 
     return response.json()
 };
@@ -47,9 +54,12 @@ export async function updateProfile(id: string, data:ProfileInput): Promise<Prof
         },
         body: JSON.stringify(data)
     })
-    if(!response.ok) {
-        throw new Error("Failed to update Profile. Try again later")
-    };
+
+    if (!response.ok) {
+    const error = await response.json().catch(() => null);
+
+    throw new Error(error?.message || `Failed to update profile: ${response.status}`);
+}
 
     return response.json()
 }
