@@ -19,8 +19,6 @@ const ProfileCard = ({ handleClick }: ProfileCardProps) => {
     const cardRef = useRef<HTMLDivElement>(null)
     useOnClickOutside(cardRef, () => handleClick(null));
 
-
-
     function handleClick1() {
         logOut(undefined, {
             onSuccess: () => {

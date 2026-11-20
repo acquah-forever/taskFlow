@@ -37,8 +37,6 @@ const Board = () => {
     useOnClickOutside(cardRef, () => setOpenEdit(null));
     const boardRef = useRef<HTMLFormElement>(null)
     useOnClickOutside(boardRef, () =>handleClick(null));
-
-
     const isPending = isCreating || isUpdating || isDeleting
 
     function onSubmit(data: FormValues) {

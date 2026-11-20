@@ -64,9 +64,9 @@ const EditProfile = ({ handleClick }: EditProfileProps) => {
         } else {
             createProfile(data, {
                 onSuccess: () => {
-                    setSuccessMessage("");
-                    setTimeout(() => {
                     setSuccessMessage("Profile created successfully");
+                    setTimeout(() => {
+                    setSuccessMessage("");
                     }, 4000);
 
                 },
@@ -77,8 +77,6 @@ const EditProfile = ({ handleClick }: EditProfileProps) => {
 
         }
     }
-
-
 
     return (
         <motion.div variants={parent} initial="hidden" animate="visible" className='w-full'>
