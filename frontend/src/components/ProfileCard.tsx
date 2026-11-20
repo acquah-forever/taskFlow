@@ -13,7 +13,7 @@ type ProfileCardProps = {
 
 const ProfileCard = ({ handleClick }: ProfileCardProps) => {
     const { data: user, isLoading: isProfileLoading } = useAuthenticatedUser()
-    const { data: profile } = useGetProfile();
+    const { data: profile } = useGetProfile(user?._id);
     const { mutate: logOut, isPending } = useLogout();
     const navigate = useNavigate();
     const cardRef = useRef<HTMLDivElement>(null)

@@ -45,11 +45,8 @@ const EditProfile = ({ handleClick }: EditProfileProps) => {
             return;
         }
 
-        if (isProfileLoading) {
-            setSubmitError("Please wait while your profile loads");
-            return;
-        }
-
+        if (isProfileLoading)  return;
+        
         if (profile._id) {
             updateProfile(
                 { data, id: profile._id }, {
