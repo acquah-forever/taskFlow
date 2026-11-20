@@ -13,10 +13,8 @@ export const getTitle: RequestHandler = async (req, res, next) => {
             throw createHttpError(401, "User not authenticated")
         };
 
-        const title = await Title.findOne({ user: authenticatedUser }).exec();
-        if (!title) {
-            throw createHttpError(404, "Board not found")
-        };
+        const title = await Title.find({ user: authenticatedUser }).exec();
+        
         res.status(200).json(title)
 
     }
