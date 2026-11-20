@@ -45,13 +45,16 @@ const EditProfile = ({ handleClick }: EditProfileProps) => {
             return;
         }
 
-        if (isProfileLoading)  return;
-        
-        if (profile._id) {
+        if (isProfileLoading) return;
+
+        if (profile?._id) {
             updateProfile(
                 { data, id: profile._id }, {
                 onSuccess: () => {
-                    setSuccessMessage("Profile updated successfully")
+                    setSuccessMessage("Profile updated successfully");
+                    setTimeout(() => {
+                        setSuccessMessage("");
+                    }, 4000);
                 },
                 onError: () => {
                     setSubmitError("Failed to update profile")
@@ -61,7 +64,11 @@ const EditProfile = ({ handleClick }: EditProfileProps) => {
         } else {
             createProfile(data, {
                 onSuccess: () => {
-                    setSuccessMessage("Profile created successfully")
+                    setSuccessMessage("");
+                    setTimeout(() => {
+                    setSuccessMessage("Profile created successfully");
+                    }, 4000);
+
                 },
                 onError: () => {
                     setSubmitError("Failed to create profile")
@@ -101,10 +108,10 @@ const EditProfile = ({ handleClick }: EditProfileProps) => {
                     {errors.bio && <p className='text-xs text-red-500'>{errors.bio.message}</p>}
                 </div>
                 <div className='flex justify-end mt-7'>
-                    <button type='submit' disabled={isPending || isProfileLoading} className="btn btn-info text-white">{isPending ? "Saving" : "Save"}</button>
+                    <button type='submit' disabled={isPending || isProfileLoading} className="cursor-pointer bg-sky-500 px-3 py-2 rounded-md text-white">{isPending ? "Saving" : "Save"}</button>
                 </div>
-                {successMessage && <p className='text-sm text-green-500'>{successMessage}</p>}
-                {submitError && <p className='text-sm text-red-500'>{submitError}</p>}
+                {successMessage && <motion.p variants={children} className='text-sm text-green-500'>{successMessage}</motion.p>}
+                {submitError && <motion.p variants={children} className='text-sm text-red-500'>{submitError}</motion.p>}
             </motion.form>
         </motion.div>
 
