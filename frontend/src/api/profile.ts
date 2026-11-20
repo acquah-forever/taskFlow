@@ -14,7 +14,11 @@ export async function getProfile(): Promise<Profile | null> {
     const response = await fetch(`${API_URL}/profile`, {
         credentials: "include"
     })
-    if(!response.ok) {
+
+        if (response.status === 404) {
+        return null;
+    }
+        if(!response.ok) {
         throw new Error ("Failed to get Profile. Try again later")
     };
 

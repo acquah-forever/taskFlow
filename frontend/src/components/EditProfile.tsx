@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { X } from "lucide-react";
 import { motion } from "motion/react";
 
+
 type EditProfileProps = {
     handleClick: (index: number) => void;
 };
@@ -14,20 +15,20 @@ interface FormValue {
     bio: string
 }
 
-    const parent = {
-        hidden: { opacity: 0 },
-        visible: { opacity: 1, y: 0, transition: { staggerChildren: 0.2, duration: 0.3 } }
-    };
+const parent = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, y: 0, transition: { staggerChildren: 0.2, duration: 0.3 } }
+};
 
-    const children = {
-        hidden: { opacity: 0, y: 40, scale: 0.95 },
-        visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.3, } }
-    };
+const children = {
+    hidden: { opacity: 0, y: 40, scale: 0.95 },
+    visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.15, } }
+};
 
 const EditProfile = ({ handleClick }: EditProfileProps) => {
     const { register, handleSubmit, formState: { errors } } = useForm<FormValue>();
     const { data: user } = useAuthenticatedUser();
-    const { data: profile } = useGetProfile();
+    const { data: profile, isLoading: isProfileLoading } = useGetProfile(user?._id);
     const { mutate: createProfile, isPending: isCreating } = useCreateProfile();
     const { mutate: updateProfile, isPending: isUpdating } = useUpdateProfile();
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -36,7 +37,20 @@ const EditProfile = ({ handleClick }: EditProfileProps) => {
 
     function OnSubmit(data: FormValue) {
 
-        if (profile._id === user._id) {
+        setSuccessMessage(null);
+        setSubmitError(null);
+
+        if (!user?._id) {
+            setSubmitError("You must be logged in to create a profile")
+            return;
+        }
+
+        if (isProfileLoading) {
+            setSubmitError("Please wait while your profile loads");
+            return;
+        }
+
+        if (profile._id) {
             updateProfile(
                 { data, id: profile._id }, {
                 onSuccess: () => {
@@ -59,6 +73,8 @@ const EditProfile = ({ handleClick }: EditProfileProps) => {
 
         }
     }
+
+
 
     return (
         <motion.div variants={parent} initial="hidden" animate="visible" className='w-full'>
@@ -88,7 +104,7 @@ const EditProfile = ({ handleClick }: EditProfileProps) => {
                     {errors.bio && <p className='text-xs text-red-500'>{errors.bio.message}</p>}
                 </div>
                 <div className='flex justify-end mt-7'>
-                    <button type='submit' disabled={isPending} className="btn btn-info text-white">{isPending ? "Saving" : "Save"}</button>
+                    <button type='submit' disabled={isPending || isProfileLoading} className="btn btn-info text-white">{isPending ? "Saving" : "Save"}</button>
                 </div>
                 {successMessage && <p className='text-sm text-green-500'>{successMessage}</p>}
                 {submitError && <p className='text-sm text-red-500'>{submitError}</p>}

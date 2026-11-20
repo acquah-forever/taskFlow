@@ -35,6 +35,10 @@ const Board = () => {
     const [openEdit, setOpenEdit] = useState<string | null>(null)
     const cardRef = useRef<HTMLDivElement>(null)
     useOnClickOutside(cardRef, () => setOpenEdit(null));
+    const boardRef = useRef<HTMLFormElement>(null)
+    useOnClickOutside(boardRef, () =>handleClick(null));
+
+
     const isPending = isCreating || isUpdating || isDeleting
 
     function onSubmit(data: FormValues) {
@@ -84,8 +88,8 @@ const Board = () => {
             {
                 open === 1 &&
                 <motion.div variants={parent} initial="hidden" animate="visible" className="mt-2 card bg-base-100 w-50 sm:w-60 h-75 shadow-sm">
-                    <div className="card-body">
-                        <motion.form variants={children} onSubmit={handleSubmit(onSubmit)}>
+                    <div  className="card-body">
+                        <motion.form ref={boardRef} variants={children} onSubmit={handleSubmit(onSubmit)}>
                             <div className='flex justify-end'>
                                 <X className='cursor-pointer' size={23} onClick={() => handleClick(2)} />
                             </div>
