@@ -17,7 +17,9 @@ export async function getTitle(): Promise<Title[]> {
         credentials: "include"
     })
     if(!response.ok) {
-        throw new Error("Failed to fetch Title.")
+        const error = await response.json().catch(() => null)
+
+        throw new Error(error?.message || `Failed to load title: ${response.status}`)
     }
     
     return response.json()
@@ -32,9 +34,13 @@ export async function createTitle(data: TitleInput): Promise<Title> {
         },
         body: JSON.stringify(data)
     })
+
     if(!response.ok) {
-        throw new Error("Failed to create Title")
+    const error = await response.json().catch(() => null)
+
+    throw new Error(error?.message || `Failed to create title: ${response.status}`)
     }
+
     return response.json()
 };
 
@@ -48,7 +54,8 @@ export async function updateTitle(id: string, data:TitleInput): Promise<Title> {
         body: JSON.stringify(data)
     })
         if(!response.ok) {
-        throw new Error("Failed to update Title")
+            const error = await response.json().catch(() => null)
+            throw new Error(error?.message || `Failed to update title: ${response.status}`)
     }
     return response.json()
 };
@@ -59,7 +66,9 @@ export async function deleteTitle(id: string ) {
         credentials: "include"
     })
     if(!response.ok) {
-        throw new Error("Failed to delete Title")
+        const error = await response.json().catch(() => null)
+
+        throw new Error(error?.message || `Failed to delete title: ${response.status}`)
     }
     return response.json()
 };

@@ -33,19 +33,18 @@ export const createTitle: RequestHandler<unknown, unknown, TitleInput, unknown> 
 
         const validateData = titlesSchema.parse(req.body);
 
-        const { title, description } = validateData;
 
-        const newTitle = await Title.create({
-            user: authenticatedUser,
-            title,
-            description
-        });
+
+        const newTitle = await Title.create({user: authenticatedUser,...validateData});
 
         res.status(201).json(newTitle);
     }
     catch (error) {
         if (error instanceof ZodError) {
-            throw createHttpError(400, "Invalid data")
+            return next(createHttpError(400, {
+                message: "Invalid data",
+                errors: error.issues
+            }))
         }
         next(error)
     }
@@ -62,7 +61,6 @@ export const updateTitle: RequestHandler<{ id: string }, unknown, UpdateTitle, u
         };
 
         const validateData = titlesSchema.parse(req.body);
-        const { title, description } = validateData;
 
         const titleId = req.params.id
 
@@ -70,14 +68,20 @@ export const updateTitle: RequestHandler<{ id: string }, unknown, UpdateTitle, u
             throw createHttpError(400, "Invalid title id")
         }
 
-        const updatedTitle = await Title.findOneAndUpdate({ _id: titleId, user: authenticatedUser }, {
-            title,
-            description
-        },
+        const updatedTitle = await Title.findOneAndUpdate(
+            {
+                _id: titleId,
+                user: authenticatedUser
+            },
+            {
+                $set: validateData
+            },
             {
                 new: true,
                 runValidators: true
-            }).exec()
+            }
+        ).exec();
+
 
         if (!updatedTitle) {
             throw createHttpError(404, "Board not found")
@@ -88,8 +92,10 @@ export const updateTitle: RequestHandler<{ id: string }, unknown, UpdateTitle, u
     }
     catch (error) {
         if (error instanceof ZodError) {
-            throw createHttpError(400, "Invalid data")
-        }
+                    return next(createHttpError(400, {
+                        message: "Invalid data",
+                        errors: error.issues
+                    }));
         next(error)
     }
 };
@@ -114,13 +120,11 @@ export const deleteTitle: RequestHandler = async (req, res, next) => {
             throw createHttpError(404, "Title not found");
         }
 
-        res.status(200).json({
-            message: "Title deleted successfully",
-        });
+        res.status(200).json({message: "Title deleted successfully"});
     }
 
     catch (error) {
         next(error);
     }
-};
-
+}
+}
