@@ -67,7 +67,7 @@ export async function deleteTitle(id: string ) {
     })
     if(!response.ok) {
         const error = await response.json().catch(() => null)
-        
+
         throw new Error(error?.message || `Failed to delete title: ${response.status}`)
     }
     return response.json()
