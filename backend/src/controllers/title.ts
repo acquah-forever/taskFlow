@@ -54,6 +54,7 @@ export const createTitle: RequestHandler<unknown, unknown, TitleInput, unknown> 
 interface UpdateTitle extends Partial<TitleInput> { }
 
 export const updateTitle: RequestHandler<{ id: string }, unknown, UpdateTitle, unknown> = async (req, res, next) => {
+
     try {
         const authenticatedUser = req.session.userId;
         if (!authenticatedUser) {
@@ -96,35 +97,30 @@ export const updateTitle: RequestHandler<{ id: string }, unknown, UpdateTitle, u
                         message: "Invalid data",
                         errors: error.issues
                     }));
-        next(error)
-    }
-};
+        
+                }
+                next(error)
+    };
+}
 
+export const deleteTitle: RequestHandler = async(req, res, next) => {
 
-
-export const deleteTitle: RequestHandler = async (req, res, next) => {
     try {
-        const authenticatedUser = req.session.userId;
-        if (!authenticatedUser) {
-            throw createHttpError(401, "User not authenticated");
+        const authenticatedUser = req.session.userId
+        if(!authenticatedUser) {
+            throw createHttpError(401, "User not authenticated")
         }
 
         const titleId = req.params.id
-        if (!mongoose.isValidObjectId(titleId)) {
+        if(!mongoose.isValidObjectId(titleId)) {
             throw createHttpError(400, "Invalid title id")
         }
 
-        const deletedTitle = await Title.findOneAndDelete({ _id: titleId, user: authenticatedUser });
+        const deleteTitle = await Title.findOneAndDelete({_id:titleId, user: authenticatedUser})
 
-        if (!deletedTitle) {
-            throw createHttpError(404, "Title not found");
-        }
-
-        res.status(200).json({message: "Title deleted successfully"});
+        res.status(200).json(deleteTitle)
     }
-
-    catch (error) {
-        next(error);
+    catch(error) {
+        next(error)
     }
-}
 }
