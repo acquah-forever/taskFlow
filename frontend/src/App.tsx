@@ -2,6 +2,7 @@ import Home from './pages/Home'
 import Login from './pages/Login'
 import SignUp from './pages/SignUp'
 import Board from './pages/Board'
+import Card from './pages/Card'
 
 import { Routes, Route } from 'react-router-dom'
 
@@ -15,6 +16,7 @@ const App = () => {
         <Route path='/board' element={<Board />} />
         <Route path='/login' element={<Login />} />
         <Route path='/signup' element={<SignUp />} />
+        <Route path="/title/:titleId/card/:cardId" element={<Card />} />
       </Routes>
       </div>
     </div>

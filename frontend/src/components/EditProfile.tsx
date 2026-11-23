@@ -36,17 +36,13 @@ const EditProfile = ({ handleClick }: EditProfileProps) => {
     const isPending = isCreating || isUpdating;
 
     function OnSubmit(data: FormValue) {
-
         setSuccessMessage(null);
         setSubmitError(null);
-
         if (!user?._id) {
             setSubmitError("You must be logged in to create a profile")
             return;
         }
-
         if (isProfileLoading) return;
-
         if (profile?._id) {
             updateProfile(
                 { data, id: profile._id }, {
