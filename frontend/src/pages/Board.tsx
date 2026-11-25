@@ -147,7 +147,7 @@ const Board = () => {
                                                         {errors.title && (<p className='text-red-500 text-xs'>{errors.title.message}</p>)}
                                                     </div>
                                                     <div>
-                                                        <label className='text-sm' htmlFor="editDescription">Edit Description</label>
+                                                        <label className='text-sm' htmlFor="editDescription">Edit Description Here</label>
                                                         <input id="editDescription" className='border rounded-md px-1 outline-none w-full text-justify leading-6' type="text" {...register('description', { required: "Description is required" })} />
                                                         {errors.description && (<p className='text-red-500 text-xs'>{errors.description.message}</p>)}
                                                     </div>
